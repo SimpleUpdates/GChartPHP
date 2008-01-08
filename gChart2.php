@@ -1,5 +1,21 @@
 <?php
 require_once('util.php');
+	class gBackground{
+		public $colors = array("ffffff");
+		public $fillType = 0;
+		protected $fillTypes = array ("s", "lg", "ls");
+		public $isChart = false;
+		public function toArray(){
+			$retArray = array();
+			if($this->isChart)
+				array_push($retArray, "c");
+			else
+				array_push($retArray, "bg");
+			array_push($retArray,$this->fillTypes[$this->fillType]);
+			array_push($retArray,$this->colors[0]);
+			return $retArray;			
+		}
+	}
 	class gChart{
 		private $baseUrl = "http://chart.apis.google.com/chart?";
 		protected $scalar = 1;
@@ -10,10 +26,13 @@ require_once('util.php');
 		public $values = Array();
 		protected $scaledValues = Array();
 		public $valueLabels;
+		public $xAxisLabels;
 		public $dataColors;
 		public $width = 200; //default
 		public $height = 200; //default
 		private $title;
+		
+		public $backgrounds;
 		
 		
 		public function setTitle($newTitle){
@@ -21,6 +40,13 @@ require_once('util.php');
 			$this->title = str_replace(" ", "+", $this->title);
 		}
 		
+		public function addBackground($gBackground){
+			if(!isset($this->backgrounds)){
+				$this->backgrounds = array($gBackground);
+				return;
+			}
+			array_push($this->backgrounds, $gBackground);
+		}
 		
 		protected function encodeData($data, $encoding, $separator){
 			switch ($this->dataEncodingType){
@@ -73,7 +99,28 @@ require_once('util.php');
 		protected function getDataSetString(){
 			return "&chd=".$this->dataEncodingType.":".$this->encodeData($this->scaledValues,"" ,",");
 		}
+		protected function getAxesString(){
+			$retStr = "&chxt=x,y";
+			$retStr .= "&chxr=0,1,4|1,1,10";
+			return $retStr;
+		}
 		
+		protected function getBackgroundString(){
+			if(!isset($this->backgrounds))
+				return "";
+			$retStr = "&chf=";
+			foreach($this->backgrounds as $currBg){
+				$retStr .= $this->textEncodeData($currBg->toArray(), ",", "|"); 
+			}
+			$retStr = trim($retStr, "|");
+			return $retStr;
+		}
+		protected function getAxisLabels(){
+			$retStr = "";
+			if(isset($this->xAxisLabels))
+				$retStr = "&chxl=0:|".$this->encodeData($this->xAxisLabels,"", "|");
+			return $retStr;
+		}
 		protected function concatUrl(){
 			$fullUrl .= $this->baseUrl;
 			$fullUrl .= "cht=".$this->types[$this->type];
@@ -82,9 +129,12 @@ require_once('util.php');
 			$fullUrl .= $this->getDataSetString();
 			if(isset($this->valueLabels))
 				$fullUrl .= "&chdl=".$this->encodeData($this->getApplicableLabels($this->valueLabels),"", "|");
+			$fullUrl .= $this->getAxisLabels();
 			$fullUrl .= "&chco=".$this->encodeData($this->dataColors,"", ",");
 			if(isset($this->title))
 				$fullUrl .= "&chtt=".$this->title;
+			$fullUrl .= $this->getAxesString();
+//			$fullUrl .= $this->getBackgroundString();
 			
 			return $fullUrl;
 		}
@@ -95,12 +145,6 @@ require_once('util.php');
 		public function getUrl(){
 			$this->prepForUrl();
 			return $this->concatUrl();
-		}
-		
-		public function printIt(){
-			print "<br>Scalar:$this->scalar <br>";
-			print "<br>Values:".print_r($this->values) ."<br>";
-			print "<br>Values:".print_r($this->scaledValues) ."<br>";
 		}
 		
 		protected function scaleValues(){
@@ -127,6 +171,10 @@ require_once('util.php');
 		function setScalar(){
 			return 1;
 		}
+
+		protected function getAxesString(){
+			return "";
+		}
 		
 		public function getUrl(){
 			$retStr = parent::getUrl();
@@ -151,19 +199,20 @@ require_once('util.php');
 	class gLineChart extends gChart{
 		function __construct(){
 			$this->type = 0;
-		}
+		}		
 	}
 	
 	class gBarChart extends gChart{
 		public $barWidth;
+		private $realBarWidth;
 		public $groupSpacerWidth = 1;
 		protected $totalBars = 1;
-		private $isHoriz = false;
+		protected $isHoriz = false;
 		public function getUrl(){
 			$this->scaleValues();
-			$retStr = parent::concatUrl();
 			$this->setBarWidth();
-			$retStr .= "&chbh=$this->barWidth,$this->groupSpacerWidth";
+			$retStr = parent::concatUrl();
+			$retStr .= "&chbh=$this->realBarWidth,$this->groupSpacerWidth";
 			return $retStr;
 		}
 		
@@ -171,16 +220,32 @@ require_once('util.php');
 			$this->totalBars = utility::count_r($this->values);
 		}
 		
+		protected function getAxisLabels(){
+			$retStr = "";
+			$xAxis = 0;
+			if($this->isHoriz)
+				$xAxis = 1;	
+			$yAxis = 1 - $xAxis;			
+			if(isset($this->xAxisLabels)){
+				$retStr = "&chxl=$xAxis:|".$this->encodeData($this->xAxisLabels,"", "|");
+//				$retStr = "&$yAxis:|".$this->encodeData($this->yAxisLabels,"", "|");
+			}
+			return $retStr;
+		}
 		private function setBarWidth(){
-			if(isset($this->barWidth))
+			if(isset($this->barWidth)){
+				$this->realBarWidth = $this->barWidth;
 				return;
+			}
 			$this->setBarCount();
 			$totalGroups = utility::getMaxCountOfArray($this->values);
-			$chartSize = $this->width - 50;
 			if($this->isHoriz)
 				$chartSize = $this->height - 50;
+			else
+				$chartSize = $this->width - 50;
+				
 			$chartSize -= $totalGroups * $this->groupSpacerWidth;
-			$this->barWidth = round($chartSize/$this->totalBars);
+			$this->realBarWidth = round($chartSize/$this->totalBars);
 		}
 		
 	}
@@ -243,14 +308,21 @@ require_once('util.php');
 		function __construct(){
 			$this->type = 8;
 		}
+		protected function getAxesString(){
+			return "";
+		}
 		
 		public function getUrl(){
 			$retStr = parent::getUrl();
-			$retStr .= "&chl=".$this->encodeData($this->valueLabels,"", "|");
+//			$retStr .= "&chl=".$this->encodeData($this->valueLabels,"", "|");
 			return $retStr;
 		}
 		protected function getDataSetString(){
 			$fullDataSet = array_splice($this->scaledValues[0], 0, 3);
+			while(count($fullDataSet)<3){
+				array_push($fullDataSet, 0);
+			}
+			
 			$scaledIntersections = utility::getScaledArray($this->intersections, $this->scalar);
 			foreach($scaledIntersections as $temp){
 				array_push($fullDataSet, $temp);
