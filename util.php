@@ -71,6 +71,10 @@ class utility{
 		}
 		return $maxValue;
 	}
+
+	public static function isArrayEmpty($array) {
+		return empty($array);
+	}
 	
 }
 
