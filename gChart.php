@@ -93,17 +93,13 @@ class gChart{
 	 */
 	private $baseUrl = "chart.apis.google.com/chart?";
 	/**
-	 * @var integer
-	 */
-	protected $scalar = 1;
-	/**
 	 * @var array
 	 */
 	private $dataEncodingType = 't';
 	/**
 	 * @var array
 	 */
-	public $values = Array();
+	protected $values = Array();
 	private $width;
 	private function setWidth($width) {
 		$this->width = $width;
@@ -693,14 +689,6 @@ class gStackedBarChart extends gBarChart{
 			$this->setProperty('cht','bvs');
 		}
 		$this->isHoriz = $isHorizontal;
-	}
-	function setScalar(){
-		$maxValue = 100;
-		$maxValue = max($maxValue, utility::getMaxOfArray(utility::addArrays($this->values)));
-		if($maxValue < 100)
-			$this->scalar = 1;
-		else
-			$this->scalar = 100/$maxValue;
 	}
 }
 
