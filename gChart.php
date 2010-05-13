@@ -393,7 +393,7 @@ class gChart{
 	 * @param $labels Array
 	 */
 	public function setLegend($labels) {
-		$this -> setProperty('chdl', $this->encodeData($this->getApplicableLabels($labels),"|"));
+		$this -> setProperty('chdl', urlencode($this->encodeData($this->getApplicableLabels($labels),"|")));
 	}
 	/**
 	 * Sets the position and the order of the legend
@@ -435,13 +435,12 @@ class gChart{
 	 * rather shrinks the chart area, if necessary.
 	 *
 	 * @param $chartMargins Array An array of four integers: <left_margin>, <right_margin>, <top_margin>, <bottom_margin>
-	 * @param $legendMargins Array An array of two integers: <legend_width>, <legend_height>
+	 * @param $legendMargins Array An array of two integers: <legend_width>, <legend_height>. Optional
 	 */
-	public function setChartMargins($chartMargins, $legendMargins) {
-		$margins = array();
-		array_push($margins, $chartMargins);
-		array_push($margins, $legendMargins);
-		$this -> setProperty('chma', $this -> encodeData($margins, ','));
+	public function setChartMargins($chartMargins, $legendMargins = array()) {
+		$this -> setProperty('chma', $this -> encodeData($chartMargins, ','));
+		if (!empty($legendMargins))
+			$this -> setProperty('chma', $this -> encodeData($legendMargins, ','), true);
 	}
 		/**
 	 * Sets visible axes.
@@ -558,6 +557,24 @@ class gChart{
 		$this->setProperty('chg', $this->encodeData(array($xAxisStepSize, $yAxisStepSize, $dashLength, $spaceLength, $xOffset, $yOffset), ','));
 	}
 	/**
+	 * Labels specific points on your chart with custom text, or with formatted versions of the data at that point.
+	 *
+	 * Please note that this function has an variable number of input variables. The order of the variable must be the following:
+	 *	- marker_type: The type of marker to use. Please refer to the documentation for usage.
+	 *	- color: The color of the markers for this set, in RRGGBB hexadecimal format.
+	 *	- series_index: The zero-based index of the data series on which to draw the markers. The index is defined by the order of addDataSet()
+	 *	- which_points: [Optional] Which point(s) to draw markers on. Default is all markers. Use '' (blank string) for default.
+	 *	- size: The size of the marker in pixels.
+	 *	- z_order: [Optional] The layer on which to draw the marker, compared to other markers and all other chart elements.
+	 *	- placement: [Optional] Additional placement details describing where to put this marker, in relation to the data point. 
+	 * You can omit the last two values when using this function.
+	 */
+	public function addValueMarkers() {
+		$args = func_get_args();
+		print_r($args);
+		$this->setProperty('chm', $this->encodeData($args, ','), true);
+	}
+	/**
 	 * Prepares the Data Set String
 	 */
 	protected function setDataSetString() {
@@ -593,7 +610,7 @@ class gPieChart extends gChart{
 	 * @param $labels Array
 	 */
 	public function setLabels($labels) {
-		$this -> setProperty('chl', $this->encodeData($this->getApplicableLabels($labels),"|"));
+		$this -> setProperty('chl', urlencode($this->encodeData($this->getApplicableLabels($labels),"|")));
 	}
 	/**
 	 * Rotates the chart.
@@ -812,10 +829,83 @@ class gQRCode extends gChart{
 	 * @param $newErrorCorrectionLevel String Please refer to the documentation for the acceptable values
 	 * @param $newMargin Integer Please refer to the documentation for the acceptable values
 	 */
-	public function seterrorCorrectionLevel($newErrorCorrectionLevel, $newMargin){
+	public function setErrorCorrectionLevel($newErrorCorrectionLevel, $newMargin){
 		$this -> setProperty('chld', $newErrorCorrectionLevel.'|'.$newMargin);
 	}
 }
 
+class gMeterChart extends gChart{
+	/**
+	 * Google-o-Meter Chart constructor.
+	 *
+	 * Please see documentation for specia usage of functions setVisibleAxes(), addAxisLabel(), and setColors().
+	 */
+	function __construct($width = 200, $height = 200){
+		$this -> setDimensions($width, $height);
+		$this -> setProperty('cht','gom');
+	}
+	public function getApplicableLabels($labels) {
+		return array_splice($labels, 0, count($this->values[0]));
+	}
+}
+
+class gMapChart extends gChart {
+	/**
+	 * Map Chart constructor. Maximum size for a map is 440x220, this is the defaul size.
+	 */
+	function __construct($width = 440, $height = 220){
+		$this -> setDimensions($width, $height);
+		$this -> setProperty('cht','t');
+	}
+	
+	/**
+	 * Geographical area shown in the chart.
+	 *
+	 * @param $zoomArea String One of the following values: africa, asia, europe, middle_east, south_america, usa, world
+	 */
+	public function setZoomArea($zoomArea) {
+		$this -> setProperty('chtm', $zoomArea);
+	}
+	/**
+	 * A list of countries or states to which you are applying values. 
+	 *
+	 * @param $stateCodes Array These are a set of two-character codes. Use either of the following types (you cannot mix types):
+	 *							ISO 3166-1-alpha-2 codes for countries, {@link http://www.iso.org/iso/english_country_names_and_code_elements}
+     *							USA state code
+	 */
+	public function setStateCodes($stateCodes){
+		$this -> setProperty('chld', $this->encodeData($stateCodes, ''));
+	}
+	/**
+	 * Specifies the colors of the chart
+	 *
+	 * @param $defaultColor String The color of regions that do not have data assigned. An RRGGBB format hexadecimal number. The default is BEBEBE (medium gray). 
+	 * @param $gradientColors Array The colors corresponding to the gradient values in the data format range. RRGGBB format hexadecimal numbers.
+	 */
+	public function setColors($defaultColor = 'BEBEBE', $gradientColors = array('0000FF', 'FF0000')) {
+		$this -> setProperty('chco', $this->encodeData(array_merge(array($defaultColor), $gradientColors), ','));
+	}
+	public function getApplicableLabels($labels) {
+		return array_splice($labels, 0, count($this->values[0]));
+	}
+}
+class gScatterChart extends gChart{
+	function __construct($width = 200, $height = 200){
+		$this -> setDimensions($width, $height);
+		$this -> setProperty('cht','s');
+	}
+	/**
+	 * There is no reason to use this function. Please refer to the documentation to know how to use colors and legend.
+	 */
+	public function getApplicableLabels($labels) {
+		return $labels;
+	}
+	/**
+	 * Sets the colors for the chart. It has a different separator than the one in the parent class
+	 */
+	public function setColors($colors) {
+		$this -> setProperty('chco', $this->encodeData($this->getApplicableLabels($colors),"|"));
+	}
+}
 ?>
 

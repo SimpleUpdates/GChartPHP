@@ -316,5 +316,60 @@ $qr = new gQRCode();<br>
 $qr -> setQRCode('gChartPhp is awesome!');<br>
 </code>
 </p>
+<h2>Google-o-Meter</h2>
+<?php
+$meter = new gMeterChart();
+$meter -> addDataSet(array(10, 50, 90));
+$meter -> setColors(array('FFFFFF','000000'));
+?>
+<img src="<?php print $meter->getUrl();  ?>" /> <br> Goole-o-Meter Chart using the gMeterChart class.
+<p>
+<em>code:</em><br>
+<code>
+$meter = new gMeterChart();<br>
+$meter -> addDataSet(array(10, 50, 90));<br>
+$meter -> setColors('FFFFFF','000000');<br>
+</code>
+</p>
+<h2>Map Chart</h2>
+<?php
+$map = new gMapChart();
+$map -> setZoomArea('usa');
+$map -> setStateCodes(array('CA', 'TX', 'NY', 'UT', 'NV'));
+$map -> addDataSet(array(23, 32, 12, 54, 23));
+?>
+<img src="<?php print $map->getUrl();  ?>" /> <br> Map Chart using the gMapChart class.
+<p>
+<em>code:</em><br>
+<code>
+$map = new gMapChart();<br>
+$map -> setZoomArea('usa');<br>
+$map -> setStateCodes(array('CA', 'TX', 'NY', 'UT', 'NV'));<br>
+$map -> addDataSet(array(23, 32, 12, 54, 23));<br>
+</code>
+</p>
+<h2>Scatter Chart</h2>
+<?php
+$scatter = new gScatterChart();
+$scatter -> addDataSet(array(12,87,75,41,23,96,68,71,34,9));
+$scatter -> addDataSet(array(98,60,27,34,56,79,58,74,18,76));
+$scatter -> addValueMarkers('d','FF0000',0,-1,15);
+$scatter -> setVisibleAxes(array('x','y'));
+$scatter -> addAxisRange(0, 0, 100);
+$scatter -> addAxisRange(1, 0, 100);
+?>
+<img src="<?php print $scatter->getUrl();  ?>" /> <br> Map Chart using the gMapChart class.
+<p>
+<em>code:</em><br>
+<code>
+$scatter = new gScatterChart();<br>
+$scatter -> addDataSet(array(12,87,75,41,23,96,68,71,34,9));<br>
+$scatter -> addDataSet(array(98,60,27,34,56,79,58,74,18,76));<br>
+$scatter -> addValueMarkers('d','FF0000',0,-1,15);<br>
+$scatter -> setVisibleAxes(array('x','y'));<br>
+$scatter -> addAxisRange(0, 0, 100);<br>
+$scatter -> addAxisRange(1, 0, 100);<br>
+</code>
+</p>
 </body>
 </html>
