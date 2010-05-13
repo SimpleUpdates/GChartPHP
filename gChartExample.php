@@ -58,9 +58,10 @@ $lineChart->setVisibleAxes(array('x','y'));
 $lineChart->setDataRange(30,400);
 $lineChart->addAxisRange(0, 1, 4, 1);
 $lineChart->addAxisRange(1, 30, 400);
+$lineChart->addBackgroundFill('bg', 'EFEFEF');
+$lineChart->addBackgroundFill('c', '000000');
 ?>
 <img src="<?php print $lineChart->getUrl();  ?>" /> <br> line chart using the gLineChart class.
-<?php print $lineChart->getUrl();  ?>
 <p>
 <em>code:</em><br>
 <code>
@@ -74,6 +75,97 @@ $lineChart->setVisibleAxes(array('x','y'));<br>
 $lineChart->setDataRange(30,400);<br>
 $lineChart->addAxisRange(0, 1, 4, 1);<br>
 $lineChart->addAxisRange(1, 30, 400);<br>
+$lineChart->addBackgroundFill('bg', 'EFEFEF');<br>
+$lineChart->addBackgroundFill('c', '000000');<br>
+</code>
+</p>
+<h2>Line Chart with Strip Fill</h2>
+<?php
+$lineChart = new gLineChart(300,300);
+$lineChart->addDataSet(array(112,315,66,40));
+$lineChart->addDataSet(array(212,115,366,140));
+$lineChart->addDataSet(array(112,95,116,140));
+$lineChart->setLegend(array("first", "second", "third","fourth"));
+$lineChart->setColors(array("ff3344", "11ff11", "22aacc", "3333aa"));
+$lineChart->setVisibleAxes(array('x','y'));
+$lineChart->setDataRange(30,400);
+$lineChart->addAxisRange(0, 1, 4, 1);
+$lineChart->addAxisRange(1, 30, 400);
+$lineChart->setStripFill('bg',0,array('CCCCCC',0.15,'FFFFFF',0.1));
+?>
+<img src="<?php print $lineChart->getUrl();  ?>" /> <br> line chart using the gLineChart class.
+<p>
+<em>code:</em><br>
+<code>
+$lineChart = new gLineChart(300,300);<br>
+$lineChart->addDataSet(array(112,315,66,40));<br>
+$lineChart->addDataSet(array(212,115,366,140));<br>
+$lineChart->addDataSet(array(112,95,116,140));<br>
+$lineChart->setLegend(array("first", "second", "third","fourth"));<br>
+$lineChart->setColors(array("ff3344", "11ff11", "22aacc", "3333aa"));<br>
+$lineChart->setVisibleAxes(array('x','y'));<br>
+$lineChart->setDataRange(30,400);<br>
+$lineChart->addAxisRange(0, 1, 4, 1);<br>
+$lineChart->addAxisRange(1, 30, 400);<br>
+$lineChart->setStripFill('bg',0,array('CCCCCC',0.15,'FFFFFF',0.1);<br>
+</code>
+</p>
+<h2>Line Chart with Line Fill</h2>
+<?php
+$lineChart = new gLineChart(300,300);
+$lineChart->addDataSet(array(112,125,66,40));
+$lineChart->setLegend(array("first"));
+$lineChart->setColors(array("ff3344"));
+$lineChart->setVisibleAxes(array('x','y'));
+$lineChart->setDataRange(30,130);
+$lineChart->addAxisRange(0, 1, 4, 1);
+$lineChart->addAxisRange(1, 30, 130);
+$lineChart->addLineFill(B,'76A4FB',0,0);
+?>
+<img src="<?php print $lineChart->getUrl();  ?>" /> <br> line chart using the gLineChart class.
+<p>
+<em>code:</em><br>
+<code>
+$lineChart = new gLineChart(300,300);<br>
+$lineChart->addDataSet(array(112,125,66,40));<br>
+$lineChart->setLegend(array("first"));<br>
+$lineChart->setColors(array("ff3344"));<br>
+$lineChart->setVisibleAxes(array('x','y'));<br>
+$lineChart->setDataRange(30,130);<br>
+$lineChart->addAxisRange(0, 1, 4, 1);<br>
+$lineChart->addAxisRange(1, 30, 130);<br>
+$lineChart->addLineFill(B,'76A4FB',0,0);<br>
+</code>
+</p>
+<h2>Line Chart with Grid Lines</h2>
+<?php
+$lineChart = new gLineChart(300,300);
+$lineChart->addDataSet(array(112,315,66,40));
+$lineChart->addDataSet(array(212,115,366,140));
+$lineChart->addDataSet(array(112,95,116,140));
+$lineChart->setLegend(array("first", "second", "third","fourth"));
+$lineChart->setColors(array("ff3344", "11ff11", "22aacc", "3333aa"));
+$lineChart->setVisibleAxes(array('x','y'));
+$lineChart->setDataRange(0,400);
+$lineChart->addAxisRange(0, 1, 4, 1);
+$lineChart->addAxisRange(1, 0, 400);
+$lineChart->setGridLines(33,10);
+?>
+<img src="<?php print $lineChart->getUrl();  ?>" /> <br> line chart using the gLineChart class.
+<p>
+<em>code:</em><br>
+<code>
+$lineChart = new gLineChart(300,300);<br>
+$lineChart->addDataSet(array(112,315,66,40));<br>
+$lineChart->addDataSet(array(212,115,366,140));<br>
+$lineChart->addDataSet(array(112,95,116,140));<br>
+$lineChart->setLegend(array("first", "second", "third","fourth"));<br>
+$lineChart->setColors(array("ff3344", "11ff11", "22aacc", "3333aa"));<br>
+$lineChart->setVisibleAxes(array('x','y'));<br>
+$lineChart->setDataRange(0,400);<br>
+$lineChart->addAxisRange(0, 1, 4, 1);<br>
+$lineChart->addAxisRange(1, 0, 400);<br>
+$lineChart->setGridLines(33,10);<br>
 </code>
 </p>
 <h2>Grouped Bar Chart</h2>
@@ -83,8 +175,9 @@ $barChart->setDimensions(800,150);
 $barChart->addDataSet(array(112,315,66,40));
 $barChart->addDataSet(array(212,115,366,140));
 $barChart->addDataSet(array(112,95,116,140));
-$barChart->setColors(array("ff3344", "11ff11", "22aacc", "3333aa"));
-$barChart->setLegend(array("first", "second", "third","fourth"));
+$barChart->setColors(array("ff3344", "11ff11", "22aacc"));
+$barChart->setLegend(array("first", "second", "third"));
+$barChart->setGradientFill('c',0,array('FFE7C6',0,'76A4FB',1));
 ?>
 <img src="<?php print $barChart->getUrl();  ?>" /> <br> grouped bar chart using the gGroupedBarChart class.
 <p>
@@ -95,15 +188,16 @@ $barChart->setDimensions(800,150);<br>
 $barChart->addDataSet(array(112,315,66,40));<br>
 $barChart->addDataSet(array(212,115,366,140));<br>
 $barChart->addDataSet(array(112,95,116,140));<br>
-$barChart->setColors(array("ff3344", "11ff11", "22aacc", "3333aa"));<br>
-$barChart->setLegend(array("first", "second", "third","fourth"));<br>
+$barChart->setColors(array("ff3344", "11ff11", "22aacc"));<br>
+$barChart->setLegend(array("first", "second", "third"));<br>
+$barChart->setGradientFill('c',0,array('FFE7C6',0,'76A4FB',1));<br>
 </code>
 </p>
 <h2>Horizontal Grouped Bar Chart</h2>
 <?php
 $barChart->setHorizontal(true);
 $barChart->setDimensions(150, 400);
-$barChart->setLegend(array("first", "second", "third","fourth"));
+$barChart->setLegend(array("This", "is", "different"));
 ?>
 <img src="<?php print $barChart->getUrl();  ?>" /> <br> horizontal grouped bar chart using the gGroupedBarChart class.
 <p>
@@ -111,7 +205,7 @@ $barChart->setLegend(array("first", "second", "third","fourth"));
 <code>
 $barChart->setHorizontal(true);<br>
 $barChart->setDimensions(150, 400);<br>
-$barChart->setLegend(array("first", "second", "third","fourth"));<br>
+$barChart->setLegend(array("This", "is", "different"));<br>
 </code>
 </p>
 <h2>Stacked Bar Chart</h2>
@@ -153,18 +247,36 @@ $barChart->groupSpacerWidth = 10;
 <h2>Venn Diagram</h2>
 <?php
 $vennDiagram = new gVennDiagram();
-$vennDiagram->addDataSet(array(1120,3150,660));
-$vennDiagram->addIntersections(array(220, 320, 400, 200));
-$vennDiagram->setEncodingType('t');
+$vennDiagram->setSizes(1120,3150);
+$vennDiagram->setIntersections(220, 320);
+$vennDiagram->setEncodingType('s');
 $vennDiagram->setColors(array("ff3344", "11ff11", "22aacc", "3333aa"));
 ?>
 <img src="<?php print $vennDiagram->getUrl();  ?>" /> <br> venn diagram using the gVennDiagram class.
 <p>
 <em>code:</em><br>
 <code>
-$vennDiagram = new gVennDiagram;<br>
-$vennDiagram->addDataSet(array(1120,3150,660));<br>
-$vennDiagram->addIntersections(array(220, 320, 400, 200));<br>
+$vennDiagram = new gVennDiagram();<br>
+$vennDiagram->setSizes(1120,3150);<br>
+$vennDiagram->setIntersections(220, 320);<br>
+$vennDiagram->setEncodingType('s');<br>
+$vennDiagram->setColors(array("ff3344", "11ff11", "22aacc", "3333aa"));<br>
+</code>
+</p>
+<h2>Venn Diagram</h2>
+<?php
+$vennDiagram = new gVennDiagram();
+$vennDiagram->setSizes(20, 20, 20);
+$vennDiagram->setIntersections(0, 4, 6, 2);
+$vennDiagram->setColors(array("ff3344", "11ff11", "22aacc", "3333aa"));
+?>
+<img src="<?php print $vennDiagram->getUrl();  ?>" /> <br> venn diagram using the gVennDiagram class.
+<p>
+<em>code:</em><br>
+<code>
+$vennDiagram = new gVennDiagram();<br>
+$vennDiagram->setSizes(10, 10, 10);<br>
+$vennDiagram->setIntersections(2, 2, 2, 1);<br>
 $vennDiagram->setColors(array("ff3344", "11ff11", "22aacc", "3333aa"));<br>
 </code>
 </p>
@@ -186,7 +298,7 @@ $latex -> setLatexCode('\cos(x)^2+\sin(x)^2=1');<br>
 $qr = new gQRCode();
 $qr -> setQRCode('gChartPhp is awesome!');
 ?>
-<img src="<?php print $qr->getUrl();  ?>" /> <br> QR Code using the gVennDiagram class.
+<img src="<?php print $qr->getUrl();  ?>" /> <br> QR Code using the gQRCode class.
 <p>
 <em>code:</em><br>
 <code>

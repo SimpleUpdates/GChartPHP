@@ -55,7 +55,7 @@ class utility{
 	}
 	
 	public static function getMaxOfArray($ArrayToCheck){
-		$maxValue = 1;
+		$maxValue = 0;
 		
 		foreach($ArrayToCheck as $temp){
 			if(is_array($temp)){
@@ -142,6 +142,17 @@ class gChart{
 		return (isset($this->maxValue));
 	}	
 	
+	/**
+	 * Defines the precision of the rounding in textEncodeData(). By default it is 2.
+	 */
+	private $precision = 2;
+	public function setPrecision($precision) {
+		$this->precision = $precision;
+	} 
+	public function getPrecision() {
+		return $this->precision;
+	}
+	
 	private $serverNum;
 	
 	public function setEncodingType($newEncodeType) {
@@ -190,6 +201,8 @@ class gChart{
 	 * This specifies floating point values from 0Ñ100, inclusive, as numbers. If user sets data range,
 	 * with setDataRange(), the function will do nothig and Google API will render the inage in those
 	 * boundaries.
+	 * 
+	 * @return Array The encoded data array, rounded to the decimal point defined by setPrecision(). By default it is 2.
 	 */
 	private function textEncodeData($data) {
 		$encodedData = array();
@@ -203,11 +216,11 @@ class gChart{
 				if (is_array($array)) {
 					$encodedData2 = array();
 					foreach ($array as $elem) {
-						array_push($encodedData2, $elem / $rate);
+						array_push($encodedData2, round($elem / $rate, $this->getPrecision()));
 					}
 					array_push($encodedData, $encodedData2);
 				} else {
-					array_push($encodedData, $array / $rate);
+					array_push($encodedData, round($array / $rate, $this->getPrecision()));
 				}
 			}
 		} else {
@@ -324,7 +337,7 @@ class gChart{
 		$fullUrl .= $this->baseUrl;
 		$this -> setDataSetString();
 		foreach ($this -> chart as $key => $value) {
-			$fullUrl .= '&'.$key.'='.$value;
+			$fullUrl .= '&amp;'.$key.'='.$value;
 		}
 		return $fullUrl;
 	}
@@ -342,8 +355,12 @@ class gChart{
 	 * @param $key String Name of the chart parameter
 	 * @param $value String Value of the chart parameter
 	 */
-	public function setProperty($key, $value) {
-		$this -> chart[$key] = $value;
+	public function setProperty($key, $value, $append = false) {
+		if ($append && isset($this->chart[$key])) {
+			$this -> chart[$key] = $this -> chart[$key].'|'.$value;
+		} else {
+			$this -> chart[$key] = $value;
+		}
 	}
 	/**
 	 * Sets chart dimensions.
@@ -449,12 +466,10 @@ class gChart{
 	 */
 	public function addAxisRange($axisIndex, $startVal, $endVal, $step = null) {
 		if (is_null($step))
-			array_push($this->axisRange, array($axisIndex, $startVal, $endVal));
+			$axisRange = array($axisIndex, $startVal, $endVal);
 		else
-			array_push($this->axisRange, array($axisIndex, $startVal, $endVal, $step));
-	}
-	public function setAxisRange() {
-		$this -> setProperty('chxr', $this->encodeData($this->axisRange,','));
+			$axisRange = array($axisIndex, $startVal, $endVal, $step);
+		$this -> setProperty('chxr', $this->encodeData($axisRange, ',') , true);
 	}
 	/**
 	 * Specifies the labels that appear on each axis independently.
@@ -463,10 +478,7 @@ class gChart{
 	 * @param $axisLabel Array One or more labels to place along this axis.
 	 */
 	public function addAxisLabel($axisIndex, $axisLabel) {
-		array_push($this->axisLabel, array($axisIndex.':') + $axisLabel);
-	}
-	public function setAxisLabel() {
-		$this->setProperty('chxl', $this->encodeData($this -> axisLabel, '|'));
+		$this->setProperty('chxl', $this->encodeData(array_merge(array($axisIndex.':'), $axisLabel), '|'), true);
 	}
 	/**
 	 * Specifies the data range. Note that this does not change the axis range; to change the axis range, you must 
@@ -479,6 +491,75 @@ class gChart{
 		$this->setMaxValue($endVal);
 		$this->setMinValue($startVal);
 		$this->setProperty('chds', $startVal.','.$endVal);
+	}
+	/**
+	 * Specifies a solid fill for the background and/or chart area, or assign a transparency value to the whole chart.
+	 *
+	 * @param $fillType String The part of the chart being filled. Please refer to the documentation for the acceptable values
+	 * @param $color String The fill color, in RRGGBB hexadecimal format. For transparencies, the first six digits are ignored, 
+	 *						but must be included anyway.
+	 */
+	public function addBackgroundFill($fillType, $color) {
+		$this->setProperty('chf', $this->encodeData(array($fillType, 's', $color), ','), true);
+	}
+	/**
+	 * Applies one or more gradient fills to chart areas or backgrounds.
+	 *
+	 * Each gradient fill specifies an angle, and then two or more colors anchored to a specified location. The color varies 
+	 * as it moves from one anchor to another. You must have at least two colors with different <color_centerpoint>  values, 
+	 * so that one can fade into the other. Each additional gradient is specified by a <color>,<color_centerpoint>  pair.
+	 *
+	 * @param $fillType String The part of the chart being filled. Please refer to the documentation for the acceptable values
+	 * @param $fillAngle Integer A number specifying the angle of the gradient from 0 (horizontal) to 90 (vertical). 
+	 * @param $colors Array An array of couples <color> (The color of the fill, in RRGGBB hexadecimal format) and 
+	 *						<color_centerpoint> (Specifies the anchor point for the color. The color will start to fade from this 
+	 *						point as it approaches another anchor. The value range is from 0.0 (bottom or left edge) to 1.0 (top 
+	 *						or right edge), tilted at the angle specified by <angle>). Please define it in this way:
+	 *						array(<color_1>,<color_centerpoint_1>,...,<color_n>,<color_centerpoint_n>).
+)
+	 */
+	public function setGradientFill($fillType, $fillAngle, $colors) {
+		$this->setProperty('chf', $this->encodeData(array_merge(array($fillType, 'lg', $fillAngle), $colors), ','));
+	}
+	/**
+	 * Specifies a striped background fill for your chart area, or the whole chart. 
+	 *
+	 * @param $fillType String The part of the chart being filled. Please refer to the documentation for the acceptable values
+	 * @param $fillAngle Integer A number specifying the angle of the gradient from 0 (horizontal) to 90 (vertical). 
+	 * @param $colors Array An array of couples <color> (The color of the fill, in RRGGBB hexadecimal format) and <width>
+     *						(The width of this stripe, from 0 to 1, where 1 is the full width of the chart. Stripes are repeated 
+	 *						until the chart is filled. Repeat <color> and <width> for each additional stripe. You must have at 
+	 *						least two stripes. Stripes alternate until the chart is filled).	Please define it in this way:
+	 *						array(<color_1>,<width_1>,...,<color_n>,<width_n>).
+	 */
+	public function setStripFill($fillType, $fillAngle, $colors) {
+		$this->setProperty('chf', $this->encodeData(array_merge(array($fillType, 'ls', $fillAngle), $colors), ','));
+	}
+	/**
+	 * Fills the area below a data line with a solid color.
+	 *
+	 * @param $where Whether to fill to the bottom of the chart, or just to the next lower line. Must be B or b. Please refer to
+	 *				 the documentation for the acceptable values
+	 * @param $color An RRGGBB format hexadecimal number of the fill color
+	 * @param $startLineIndex The index of the line at which the fill starts. The first data series specified in addDataSet() has an 
+	 *						  index of zero (0), the second data series has an index of 1, and so on.
+	 * @param $endLineIndex Please refer to the documentation for the usage of this parameter.
+	 */
+	public function addLineFill($where, $color, $startLineIndex, $endLineIndex) {
+		$this->setProperty('chm', $this->encodeData(array($where, $color, $startLineIndex, $endLineIndex, 0),','), true);
+	}
+	/**
+	 * Specifies solid or dotted grid lines on your chart
+	 *
+	 * @param $xAxisStepSize Ingeger Used to calculate how many x grid lines to show on the chart. 100 / step_size = how many grid lines on the chart.
+	 * @param $yAxisStepSize Integer Used to calculate how many x or y grid lines to show on the chart. 100 / step_size = how many grid lines on the chart.
+	 * @param $dashLength Integerthe Length of each line dash, in pixels. By default it is 4
+	 * @param $spaceLength Integer The spacing between dashes, in pixels. Specify 0 for for a solid line. By default it is 1
+	 * @param $xOffset Integer The number of units, according to the chart scale, to offset the x grid line.
+	 * @param $yOffset Integer The number of units, according to the chart scale, to offset the y grid line.
+	 */
+	public function setGridLines($xAxisStepSize, $yAxisStepSize, $dashLength = 4, $spaceLength = 1, $xOffset = 0, $yOffset = 0) {
+		$this->setProperty('chg', $this->encodeData(array($xAxisStepSize, $yAxisStepSize, $dashLength, $spaceLength, $xOffset, $yOffset), ','));
 	}
 	/**
 	 * Prepares the Data Set String
@@ -536,19 +617,12 @@ class gPieChart extends gChart{
 }
 
 class gLineChart extends gChart{
-	
-	protected $axisRange;
-	protected $axisLabel;
-	
+		
 	function __construct($width = 200, $height = 200){
 		$this -> setProperty('cht', 'lc');
-		$this -> setDimensions($width, $height);	
-		$this -> axisRange = array();
-		$this -> axisLabel = array();	
+		$this -> setDimensions($width, $height);		
 	}
 	public function getUrl() {
-		$this->setAxisRange();
-		$this->setAxisLabel();
 		$retStr = parent::getUrl();
 		return $retStr;	
 	}
@@ -560,9 +634,6 @@ class gBarChart extends gChart{
 	public $groupSpacerWidth = 1;
 	protected $totalBars = 1;
 	protected $isHoriz = false;
-	
-	protected $axisRange;
-	protected $axisLabel;
 	
 	public function getUrl(){
 		$this->setBarWidth();
@@ -592,9 +663,7 @@ class gBarChart extends gChart{
 class gGroupedBarChart extends gBarChart{
 	function __construct($width = 200, $height = 200){
 		$this->setProperty('cht','bvg');
-		$this -> setDimensions($width, $height);
-		$this -> axisRange = array();
-		$this -> axisLabel = array();	
+		$this -> setDimensions($width, $height);	
 	}
 	
 	public function setHorizontal($isHorizontal = true){
@@ -611,9 +680,7 @@ class gGroupedBarChart extends gBarChart{
 class gStackedBarChart extends gBarChart{
 	function __construct($width = 200, $height = 200){
 		$this->setProperty('cht','bvs');
-		$this->setDimensions($width, $height);
-		$this -> axisRange = array();
-		$this -> axisLabel = array();			
+		$this->setDimensions($width, $height);			
 	}
 	function setBarCount(){
 		$this->totalBars = utility::getMaxCountOfArray($this->values);
@@ -638,32 +705,32 @@ class gStackedBarChart extends gBarChart{
 }
 
 class gVennDiagram extends gChart{
-	private $intersections = array(0,0,0,0);
-	public function addIntersections($mixed){
-		$this->intersections = $mixed;
-	}
+	
+	private $sizes;
+	private $intersections;
+	private $numData;
+		
 	function __construct($width = 200, $height = 200){
 		$this -> setProperty('cht', 'v');
-		$this -> setDimensions($width, $height);		
+		$this -> setDimensions($width, $height);
+		$this -> sizes = array(0,0,0);	
+		$this -> intersections = array(0,0,0,0);
+		$this->numData = 2;	
 	}
-	protected function setDataSetString(){
-		$fullDataSet = array_splice($this->values[0], 0, 3);
-		while(count($fullDataSet) < 3){
-			array_push($fullDataSet, 0);
-		}
-		
-		foreach($this->intersections as $temp){
-			array_push($fullDataSet, $temp);
-		}
-		$fullDataSet = array_splice($fullDataSet, 0, 7);
-		while(count($fullDataSet)<7){
-			array_push($fullDataSet, 0);
-		}
-		
-		$this -> setProperty('&chd', $this->getEncodingType().":".$this->encodeData($fullDataSet, ',', $this->getEncodingType()));
+	public function setSizes($A=0, $B=0, $C=0){
+		if ($C)
+			$this->numData = 3;
+		$this->sizes = array($A, $B, $C);
+	}
+	public function setIntersections($AB=0, $AC=0, $BC=0, $ABC=0){
+		$this->intersections = array($AB, $AC, $BC, $ABC);
+	}
+	public function setDataSetString(){
+		$fullDataSet = array_merge($this->sizes, $this->intersections);
+		$this -> setProperty('chd', $this->getEncodingType().":".$this->encodeData($fullDataSet, ',', $this->getEncodingType()));
 	}
 	public function getApplicableLabels($labels) {
-		return array_splice($labels, 0, count($this->values[0]));
+		return array_splice($labels, 0, $this->numData);
 	}
 }
 
