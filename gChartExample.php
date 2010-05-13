@@ -170,41 +170,51 @@ $lineChart->setGridLines(33,10);<br>
 </p>
 <h2>Grouped Bar Chart</h2>
 <?php
-$barChart = new gGroupedBarChart();
-$barChart->setDimensions(800,150);
+$barChart = new gBarChart(500,150,'g');
 $barChart->addDataSet(array(112,315,66,40));
 $barChart->addDataSet(array(212,115,366,140));
 $barChart->addDataSet(array(112,95,116,140));
 $barChart->setColors(array("ff3344", "11ff11", "22aacc"));
 $barChart->setLegend(array("first", "second", "third"));
 $barChart->setGradientFill('c',0,array('FFE7C6',0,'76A4FB',1));
+$barChart->setAutoBarWidth();
 ?>
 <img src="<?php print $barChart->getUrl();  ?>" /> <br> grouped bar chart using the gGroupedBarChart class.
 <p>
 <em>code:</em><br>
 <code>
-$barChart = new gGroupedBarChart();<br>
-$barChart->setDimensions(800,150);<br>
+$barChart = new gBarChart(500,150,'g');<br>
 $barChart->addDataSet(array(112,315,66,40));<br>
 $barChart->addDataSet(array(212,115,366,140));<br>
 $barChart->addDataSet(array(112,95,116,140));<br>
 $barChart->setColors(array("ff3344", "11ff11", "22aacc"));<br>
 $barChart->setLegend(array("first", "second", "third"));<br>
 $barChart->setGradientFill('c',0,array('FFE7C6',0,'76A4FB',1));<br>
+$barChart->setAutoBarWidth();<br>
 </code>
 </p>
 <h2>Horizontal Grouped Bar Chart</h2>
 <?php
-$barChart->setHorizontal(true);
-$barChart->setDimensions(150, 400);
+$barChart = new gBarChart(150,500,'g','h');
+$barChart->addDataSet(array(112,315,66,40));
+$barChart->addDataSet(array(212,115,366,140));
+$barChart->addDataSet(array(112,95,116,140));
+$barChart->setColors(array("ff3344", "11ff11", "22aacc"));
+$barChart->setLegend(array("first", "second", "third"));
+$barChart->setGradientFill('c',0,array('FFE7C6',0,'76A4FB',1));
 $barChart->setLegend(array("This", "is", "different"));
 ?>
 <img src="<?php print $barChart->getUrl();  ?>" /> <br> horizontal grouped bar chart using the gGroupedBarChart class.
 <p>
 <em>code:</em><br>
 <code>
-$barChart->setHorizontal(true);<br>
-$barChart->setDimensions(150, 400);<br>
+$barChart = new gBarChart(150,500,'g','h');<br>
+$barChart->addDataSet(array(112,315,66,40));<br>
+$barChart->addDataSet(array(212,115,366,140));<br>
+$barChart->addDataSet(array(112,95,116,140));<br>
+$barChart->setColors(array("ff3344", "11ff11", "22aacc"));<br>
+$barChart->setLegend(array("first", "second", "third"));<br>
+$barChart->setGradientFill('c',0,array('FFE7C6',0,'76A4FB',1));<br>
 $barChart->setLegend(array("This", "is", "different"));<br>
 </code>
 </p>
