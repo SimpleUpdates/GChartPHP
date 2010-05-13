@@ -89,7 +89,7 @@ $lineChart->setLegend(array("first", "second", "third","fourth"));
 $lineChart->setColors(array("ff3344", "11ff11", "22aacc", "3333aa"));
 $lineChart->setVisibleAxes(array('x','y'));
 $lineChart->setDataRange(30,400);
-$lineChart->addAxisRange(0, 1, 4, 1);
+$lineChart->addAxisLabel(0, array("This", "axis", "has", "labels!"));
 $lineChart->addAxisRange(1, 30, 400);
 $lineChart->setStripFill('bg',0,array('CCCCCC',0.15,'FFFFFF',0.1));
 ?>
@@ -105,7 +105,7 @@ $lineChart->setLegend(array("first", "second", "third","fourth"));<br>
 $lineChart->setColors(array("ff3344", "11ff11", "22aacc", "3333aa"));<br>
 $lineChart->setVisibleAxes(array('x','y'));<br>
 $lineChart->setDataRange(30,400);<br>
-$lineChart->addAxisRange(0, 1, 4, 1);<br>
+$lineChart->addAxisLabel(0, array("This", "axis", "has", "labels!"));<br>
 $lineChart->addAxisRange(1, 30, 400);<br>
 $lineChart->setStripFill('bg',0,array('CCCCCC',0.15,'FFFFFF',0.1);<br>
 </code>
