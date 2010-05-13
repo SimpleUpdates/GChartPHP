@@ -571,7 +571,6 @@ class gChart{
 	 */
 	public function addValueMarkers() {
 		$args = func_get_args();
-		print_r($args);
 		$this->setProperty('chm', $this->encodeData($args, ','), true);
 	}
 	/**
