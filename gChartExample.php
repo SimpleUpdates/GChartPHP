@@ -3,14 +3,14 @@ ini_set('display_errors','1');
 ?>
 <html>
 <head>
-<title>PHP Wrapper for Google Chart API Examples - 0.4</title>
+<title>PHP Wrapper for Google Chart API Examples - 0.5</title>
 
 <style type="text/css">
 img { display:block; }
 </style>
 </head>
 <body>
-<h1>PHP Wrapper for Google Chart API Examples - 0.4</h1>
+<h1>PHP Wrapper for Google Chart API Examples - 0.5</h1>
 <h1>Quick examples.</h1>
 
 <?php
@@ -37,13 +37,38 @@ $piChart->setColors(array("ff3344", "11ff11", "22aacc", "3333aa"));<br>
 </p>
 <h2>3D Pie Chart</h2>
 <?php
-$piChart->set3D(true);
+$pie3dChart = new gPie3DChart();
+$pie3dChart->addDataSet(array(112,315,66,40));
+$pie3dChart->setLegend(array("first", "second", "third","fourth"));
+$pie3dChart->setLabels(array("first", "second", "third","fourth"));
+$pie3dChart->setColors(array("ff3344", "11ff11", "22aacc", "3333aa"));
 ?>
-<img src="<?php print $piChart->getUrl();  ?>" /> <br> 3D pi chart using the gPieChart class.
+<img src="<?php print $pie3dChart->getUrl();  ?>" /> <br> 3D pie chart using the gPieChart class.
 <p>
 <em>code:</em><br>
 <code>
-$piChart->set3D(true);<br>
+$pie3dChart = new gPie3DChart();<br>
+$pie3dChart->addDataSet(array(112,315,66,40));<br>
+$pie3dChart->setLegend(array("first", "second", "third","fourth"));<br>
+$pie3dChart->setLabels(array("first", "second", "third","fourth"));<br>
+$pie3dChart->setColors(array("ff3344", "11ff11", "22aacc", "3333aa"));<br>
+</code>
+</p>
+<h2>Concentric Pie Chart</h2>
+<?php
+$CPChart = new gConcentricPieChart();
+$CPChart->addDataSet(array(112,315,66,40));
+$CPChart->addDataSet(array(100,235,346,50));
+$CPChart->setColors(array("ff3344", "11ff11", "22aacc", "3333aa"));
+?>
+<img src="<?php print $CPChart->getUrl();  ?>" /> <br> pie chart using the gPieChart class.
+<p>
+<em>code:</em><br>
+<code>
+$CPChart = new gConcentricPieChart();<br>
+$CPChart->addDataSet(array(112,315,66,40));<br>
+$CPChart->addDataSet(array(100,235,346,50));<br>
+$CPChart->setColors(array("ff3344", "11ff11", "22aacc", "3333aa"));<br>
 </code>
 </p>
 <h2>Line Chart</h2>
@@ -369,6 +394,54 @@ $scatter -> addValueMarkers('d','FF0000',0,-1,15);<br>
 $scatter -> setVisibleAxes(array('x','y'));<br>
 $scatter -> addAxisRange(0, 0, 100);<br>
 $scatter -> addAxisRange(1, 0, 100);<br>
+</code>
+</p>
+<h2>Grouped Bar Chart</h2>
+<?php
+$barChart = new gBarChart(250,250,'s');
+$barChart->addDataSet(array(0,10,20,30,20,70,80));
+$barChart->addDataSet(array(0,20,10,5,20,30,10));
+$barChart->addHiddenDataSet(array(10,0,20,15,60,40,30));
+$barChart->addValueMarkers('D','76A4FB',2,0,3);
+$barChart->setAutoBarWidth();
+?>
+<img src="<?php print $barChart->getUrl();  ?>" /> <br> compound bar chart using the gGroupedBarChart class and addValueMarkers().
+<p>
+<em>code:</em><br>
+<code>
+$barChart = new gBarChart(250,250,'s');<br>
+$barChart->addDataSet(array(0,10,20,30,20,70,80));<br>
+$barChart->addDataSet(array(0,20,10,5,20,30,10));<br>
+$barChart->addHiddenDataSet(array(10,0,20,15,60,40,30));<br>
+$barChart->addValueMarkers('D','76A4FB',2,0,3);<br>
+$barChart->setAutoBarWidth();<br>
+</code>
+</p>
+<h2>Candlestick Chart</h2>
+<?php
+$candlestick = new gLineChart(200,125);
+$candlestick -> addDataSet(array(90,80,70,50,40,30,20,10));
+$candlestick -> addHiddenDataSet(array(0,5,10,0,5,10,0));
+$candlestick -> addHiddenDataSet(array(2,15,20,5,15,40,0));
+$candlestick -> addHiddenDataSet(array(5,35,20,2,35,20,0));
+$candlestick -> addHiddenDataSet(array(15,40,30,15,40,50,0));
+$candlestick -> addValueMarkers('F','000000',1,'1:-2',20);
+$candlestick -> setVisibleAxes(array('y'));
+$candlestick -> addAxisRange(0, 0, 100);
+?>
+<img src="<?php print $candlestick->getUrl();  ?>" /> <br> compound bar chart using the gGroupedBarChart class and addValueMarkers().
+<p>
+<em>code:</em><br>
+<code>
+$candlestick = new gLineChart(200,125);<br>
+$candlestick -> addDataSet(array(90,80,70,50,40,30,20,10));<br>
+$candlestick -> addHiddenDataSet(array(0,5,10,0,5,10,0));<br>
+$candlestick -> addHiddenDataSet(array(2,15,20,5,15,40,0));<br>
+$candlestick -> addHiddenDataSet(array(5,35,20,2,35,20,0));<br>
+$candlestick -> addHiddenDataSet(array(15,40,30,15,40,50,0));<br>
+$candlestick -> addValueMarkers('F','000000',1,'1:-2',20);<br>
+$candlestick -> setVisibleAxes(array('y'));<br>
+$candlestick -> addAxisRange(0, 0, 100);<br>
 </code>
 </p>
 </body>

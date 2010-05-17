@@ -2,7 +2,7 @@
 /**
  * gChartPhp, a php wrapper for  the Google Chart Tools / Image Charts (aka Chart API) {@link http://code.google.com/apis/charttools/}
  */
- 
+
 /**
  * Utility class
  *
@@ -79,7 +79,7 @@ class utility{
  *
  * This is the mainframe of the wrapper
  *
- * @version 0.4
+ * @version 0.5
  */
 class gChart{
 	/**
@@ -87,19 +87,24 @@ class gChart{
 	 * @var array
 	 */
 	private $chart;
+	
 	/**
+	 * API server URL
 	 * @var string
-	 * @usedby gChat::getUrl()
+	 * @usedby getUrl()
 	 */
 	private $baseUrl = "chart.apis.google.com/chart?";
+	
 	/**
-	 * @var array
-	 */
-	private $dataEncodingType = 't';
-	/**
+	 * Data set values. Every array entry is a data set.
 	 * @var array
 	 */
 	protected $values = Array();
+	
+	/**
+	 * Widht of the chart
+	 * @var Integer
+	 */
 	private $width;
 	private function setWidth($width) {
 		$this->width = $width;
@@ -107,35 +112,17 @@ class gChart{
 	public function getWidth() {
 		return($this->width);
 	}
+	
+	/**
+	 * Height of the chart
+	 * @var Integer
+	 */
 	private $height;
 	private function setHeight($height) {
 		$this->height = $height;
 	}
 	public function getHeight() {
 		return($this->height);
-	}
-	/**
-	 * Max and Min value for the data set, as used in setDataRange
-	 */
-	private $minValue;
-	private function setMinValue($minValue) {
-		$this->minValue = $minValue;
-	}
-	public function getMinValue() {
-		return($this->minValue);
-	}
-	public function isSetMinValue() {
-		return (isset($this->minValue));
-	}
-	private $maxValue;
-	private function setMaxValue($maxValue) {
-		$this->maxValue = $maxValue;
-	}
-	public function getMaxValue() {
-		return($this->maxValue);
-	}
-	public function isSetMaxValue() {
-		return (isset($this->maxValue));
 	}	
 	
 	/**
@@ -149,8 +136,23 @@ class gChart{
 		return $this->precision;
 	}
 	
-	private $serverNum;
+	/**
+	 * Handles the number of items in the dataset.
+	 */
+	private $dataCount;
+	public function setDataCount($dataCount){
+		if (!isset($this->dataCount))
+			$this->dataCount = $dataCount;
+	}
+	public function getDataCount(){
+		return $this->dataCount;
+	}
 	
+	/**
+	 * Data encoding char
+	 * @var char
+	 */
+	private $dataEncodingType = 't';
 	public function setEncodingType($newEncodeType) {
 		$this->dataEncodingType = $newEncodeType;
 	}
@@ -185,27 +187,43 @@ class gChart{
 		$retStr .= $datasetSeparator;
 		return $retStr;
 	}
-	public function addDataSet($dataArray){
-		array_push($this->values, $dataArray);
+	
+	/**
+	 * Adds a data set
+	 *
+	 * @param $data Array Data Set values
+	 */
+	public function addDataSet($data){
+		array_push($this->values, $data);
 	}
+	/**
+	 * Adds a hidden data set. Use this function, used with addValueMarkers(), to build compound charts
+	 *
+	 * @param $hiddenData Array Data Set values
+	 */
+	public function addHiddenDataSet($hiddenData){
+		$this->setDataCount(count($this->values));
+		array_push($this->values, $hiddenData);
+	}
+	
 	public function clearDataSets(){
 		$this->values = Array();
 	}
 	/**
 	 * Encodes the data as Basic Text and Text Format with Custom Scaling. 
 	 *
-	 * This specifies floating point values from 0Ñ100, inclusive, as numbers. If user sets data range,
+	 * This specifies floating point values from 0-100, inclusive, as numbers. If user sets data range,
 	 * with setDataRange(), the function will do nothig and Google API will render the inage in those
 	 * boundaries.
 	 * 
 	 * @return Array The encoded data array, rounded to the decimal point defined by setPrecision(). By default it is 2.
 	 */
 	private function textEncodeData($data) {
-		$encodedData = array();
-		$max = utility::getMaxOfArray($data);
-		if ($this->isSetMaxValue()) {
+		if (isset($this->chart['chds'])) {
 			return $data;
 		}
+		$encodedData = array();
+		$max = utility::getMaxOfArray($data);
 		if ($max > 100) {
 			$rate = $max / 100;
 			foreach ($data as $array) {
@@ -225,8 +243,10 @@ class gChart{
 		return $encodedData;
 	}
 	/**
-	 * Encodes the data as Simple Text. This specifies integer values from 0Ñ61, inclusive, encoded by a single 
+	 * Encodes the data as Simple Text. This specifies integer values from 0-61, inclusive, encoded by a single 
 	 * alphanumeric character. This results in the shortest data string URL of all the data formats.
+	 *
+	 * @todo Add support for missing values
 	 */
 	private function simpleEncodeData($data){
 		$encode_string='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -263,8 +283,10 @@ class gChart{
 		return $encodedData;
 	}
 	/**
-	 * Encodes the data as Extended Text. This specifies integer values from 0Ñ4095, inclusive, encoded by 
+	 * Encodes the data as Extended Text. This specifies integer values from 0-4095, inclusive, encoded by 
 	 * two alphanumeric characters.
+	 *
+	 * @todo Add support for missing values
 	 */
 	private function extendedEncodeData($data){
 		$encode_string='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-.';
@@ -323,29 +345,36 @@ class gChart{
 		}
 		return $encodedData;
 	}
+	
+	/**
+	 * Returns the applicable labels, based on the number of data sets of the chart.
+	 */
 	public function getApplicableLabels($labels){
 		return array_splice($labels, 0, count($this->values));
 	}
-	public function getUrl(){
-		$fullUrl = "http://";
-		if(isset($this->serverNum))
-			$fullUrl .= $this->serverNum.".";
-		$fullUrl .= $this->baseUrl;
-		$this -> setDataSetString();
-		foreach ($this -> chart as $key => $value) {
-			$fullUrl .= '&amp;'.$key.'='.$value;
-		}
-		return $fullUrl;
-	}
+	
+	/**
+	 * Server number processing the chart
+	 * @var Integer
+	 */
+	private $serverNum;
+	/**
+	 * Sets server number processing the chart.
+	 *
+	 * @param $newServerNum Integer The server number. The function will scale this number to the range 0-9
+	 */
 	public function setServerNumber($newServerNum){
 		$this->serverNum = $newServerNum % 10;
 	}
-	public function getImgCode(){
-		$code = '<img src="';
-		$code .= $this->getUrl().'"';
-		$code .= 'alt="gChartPhp Chart" width='.$this->width.' height='.$this->height.'>';
-		print($code);
+	/**
+	 * Returns the server number processing the chart
+	 *
+	 * @return Integer
+	 */
+	public function getServerNumber(){
+		return ($this->serverNum);
 	}
+	
 	/**
 	 * Sets the chart property
 	 * @param $key String Name of the chart parameter
@@ -483,8 +512,6 @@ class gChart{
 	 * @param $endVal Integer A number, definig the high value for the data set. Usually, it is the same as $endVal in addAxisRange
 	 */
 	public function setDataRange($startVal, $endVal) {
-		$this->setMaxValue($endVal);
-		$this->setMinValue($startVal);
 		$this->setProperty('chds', $startVal.','.$endVal);
 	}
 	/**
@@ -511,7 +538,6 @@ class gChart{
 	 *						point as it approaches another anchor. The value range is from 0.0 (bottom or left edge) to 1.0 (top 
 	 *						or right edge), tilted at the angle specified by <angle>). Please define it in this way:
 	 *						array(<color_1>,<color_centerpoint_1>,...,<color_n>,<color_centerpoint_n>).
-)
 	 */
 	public function setGradientFill($fillType, $fillAngle, $colors) {
 		$this->setProperty('chf', $this->encodeData(array_merge(array($fillType, 'lg', $fillAngle), $colors), ','));
@@ -573,13 +599,38 @@ class gChart{
 		$args = func_get_args();
 		$this->setProperty('chm', $this->encodeData($args, ','), true);
 	}
+	
 	/**
 	 * Prepares the Data Set String
 	 */
 	protected function setDataSetString() {
 		if(!utility::isArrayEmpty($this->values)) {
-			$this -> setProperty('chd', $this->getEncodingType().':'.$this->encodeData($this->values,',',$this->getEncodingType()));
+			$this -> setProperty('chd', $this->getEncodingType().$this->getDataCount().':'.$this->encodeData($this->values,',',$this->getEncodingType()));
 		}
+	}
+	
+	/**
+	 * Returns the url code for the image.
+	 */
+	public function getUrl(){
+		$fullUrl = "http://";
+		if(isset($this->serverNum))
+			$fullUrl .= $this->getServerNumber().".";
+		$fullUrl .= $this->baseUrl;
+		$this -> setDataSetString();
+		foreach ($this -> chart as $key => $value) {
+			$fullUrl .= '&amp;'.$key.'='.$value;
+		}
+		return $fullUrl;
+	}
+	/**
+	 * Returns the html img code. This code is HTML 4.01 strict compliant.
+	 */
+	public function getImgCode(){
+		$code = '<img src="';
+		$code .= $this->getUrl().'"';
+		$code .= 'alt="gChartPhp Chart" width='.$this->width.' height='.$this->height.'>';
+		print($code);
 	}
 }
 
@@ -618,13 +669,32 @@ class gPieChart extends gChart{
 	 * you can specify a custom rotation using this function.
 	 *
 	 * @param $angle Integer A floating point value describing how many radians to rotate the chart clockwise. 
-	 * One complete turn is 2¹ (2 piÑabout 6.28) radians.
+	 * 						 One complete turn is 2 pi radiants (2 pi is about 6.2831).
 	 * @param $degree Bool Specifies if $angle is in degrees and not in radians. The function will to the conversion.
 	 */
 	public function setRotation($angle, $degree = false) {
 		if ($degree)
 			$angle = ($angle / 360) * 6.2831;
 		$this -> setProperty('chp', $angle);
+	}
+}
+
+class gPie3DChart extends gPieChart {
+	function __construct($width = 500, $height = 200) {
+		$this -> setProperty('cht', 'p3');
+		$this -> setDimensions($width, $height);
+	}
+}
+/**
+ * Concentric Pie Chart
+ */
+class gConcentricPieChart extends gPieChart {
+	function __construct($width = 350, $height = 200) {
+		$this -> setProperty('cht', 'pc');
+		$this -> setDimensions($width, $height);
+	}
+	public function getApplicableLabels($labels) {
+		return array_splice($labels, 0, count($this->values));
 	}
 }
 
