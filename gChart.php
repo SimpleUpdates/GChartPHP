@@ -380,9 +380,9 @@ class gChart{
 	 * @param $key String Name of the chart parameter
 	 * @param $value String Value of the chart parameter
 	 */
-	public function setProperty($key, $value, $append = false) {
+	public function setProperty($key, $value, $append = false, $dataSetSeparator = '|') {
 		if ($append && isset($this->chart[$key])) {
-			$this -> chart[$key] = $this -> chart[$key].'|'.$value;
+			$this -> chart[$key] = $this -> chart[$key].$dataSetSeparator.$value;
 		} else {
 			$this -> chart[$key] = $value;
 		}
@@ -408,9 +408,11 @@ class gChart{
 			$this -> setProperty('chs', $height);
 	}
 	/**
-	 * Sets the colors for element of the chart
+	 * Sets the colors for element of the chart.
 	 *
-	 * @param $colors Array Specify colors using a 6-character string of hexadecimal values, 
+	 * This is the basic function. The data in the array are interpreted as one color one data set.
+	 *
+	 * @param $colors Array Specifies colors using a 6-character string of hexadecimal values, 
 	 *						plus two optional transparency values, in the format RRGGBB[AA]. 
 	 */
 	public function setColors($colors) {
@@ -677,8 +679,39 @@ class gPieChart extends gChart{
 			$angle = ($angle / 360) * 6.2831;
 		$this -> setProperty('chp', $angle);
 	}
+	/**
+	 * Sets the colors for element of the chart.
+	 *
+	 * This is the basic function. The data in the array are interpreted as one color one slice. If you are
+	 * using gConcentricPieChart(), consider using setColors() for more customization.
+	 *
+	 * @param $colors Array Specifies colors using a 6-character string of hexadecimal values, 
+	 *						plus two optional transparency values, in the format RRGGBB[AA]. 
+	 */
+	public function setColors($colors) {
+		$this -> setProperty('chco', $this->encodeData($this->getApplicableLabels($colors), "|"), true);
+	}
+	/**
+	 * Sets colors for each data set.
+	 *
+	 * This function allows you to specify colors for each individual slice of the chart or to specify a 
+	 * color gradient. Usage:
+	 * - One color one slice: addColors(array($colorSlice1, .., $colorSliceN)). If there are less color than
+	 *   slices, the colors are repeated
+	 * - Gradient filling: addColors(array($gradientColor)). The chart will be colored in a gradient of
+	 *   $gradientColor
+	 * If you are using gConcentricPie class, run an instance of this function for each data set.
+	 *
+	 * @param $colors Array Specifies colors using a 6-character string of hexadecimal values,
+	 * 						plus two optional transparency values, in the format RRGGBB[AA]
+	 */
+	public function addColors($colors) {
+		$this -> setProperty('chco', $this->encodeData($colors, "|"), true, ",");
+	}
 }
-
+/**
+ * 3-dimensional Pie Chart
+ */
 class gPie3DChart extends gPieChart {
 	function __construct($width = 500, $height = 200) {
 		$this -> setProperty('cht', 'p3');
@@ -693,8 +726,23 @@ class gConcentricPieChart extends gPieChart {
 		$this -> setProperty('cht', 'pc');
 		$this -> setDimensions($width, $height);
 	}
+	/**
+	 * Returns the applicable labels for the chart.
+	 * 
+	 * This function counts recursively the numeber of values in the $values array.
+	 */
 	public function getApplicableLabels($labels) {
-		return array_splice($labels, 0, count($this->values));
+		return array_splice($labels, 0, utility::count_r($this->values));
+	}
+	/**
+	 * Adds the legend for Concentric Pie Charts
+	 *
+	 * Run an instance of this function for each data set.
+	 *
+	 * @param $labels Array
+	 */
+	public function addLegend($labels) {
+		$this -> setProperty('chdl', urlencode($this->encodeData($this->getApplicableLabels($labels),"|")), true);
 	}
 }
 
@@ -774,6 +822,20 @@ class gBarChart extends gChart{
 	 */
 	public function setBarScale($barScale = 'a', $spaceBetweenBars = '4',$spaceBetweenGroups = '8') {
 		$this -> setProperty('chbh', $this->encodeData(array($barScale, $spaceBetweenBars,$spaceBetweenGroups), ','));
+	}
+	/**
+	 * Sets colors for each data set.
+	 *
+	 * This function allows you to specify colors for each individual slice of the chart or to specify a 
+	 * color gradient. Usage:
+	 * - One color one bar: addColors(array($colorBar1, .., $colorBarN)). If there are less color than
+	 *   bars, the colors are repeated
+	 *
+	 * @param $colors Array Specifies colors using a 6-character string of hexadecimal values,
+	 * 						plus two optional transparency values, in the format RRGGBB[AA]
+	 */
+	public function addColors($colors) {
+		$this -> setProperty('chco', $this->encodeData($colors, "|"), true, ",");
 	}
 }
 class gGroupedBarChart extends gBarChart{

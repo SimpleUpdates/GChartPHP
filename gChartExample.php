@@ -59,7 +59,11 @@ $pie3dChart->setColors(array("ff3344", "11ff11", "22aacc", "3333aa"));<br>
 $CPChart = new gConcentricPieChart();
 $CPChart->addDataSet(array(112,315,66,40));
 $CPChart->addDataSet(array(100,235,346,50));
-$CPChart->setColors(array("ff3344", "11ff11", "22aacc", "3333aa"));
+$CPChart->addColors(array("008800", "880000"));
+$CPChart->addColors(array("000088", "888800"));
+$CPChart->addLegend(array('1', '2', '3', '4'));
+$CPChart->addLegend(array('1a', '2a', '3a', '4a'));
+
 ?>
 <img src="<?php print $CPChart->getUrl();  ?>" /> <br> pie chart using the gPieChart class.
 <p>
@@ -68,7 +72,10 @@ $CPChart->setColors(array("ff3344", "11ff11", "22aacc", "3333aa"));
 $CPChart = new gConcentricPieChart();<br>
 $CPChart->addDataSet(array(112,315,66,40));<br>
 $CPChart->addDataSet(array(100,235,346,50));<br>
-$CPChart->setColors(array("ff3344", "11ff11", "22aacc", "3333aa"));<br>
+$CPChart->addColors(array("008800", "880000"));<br>
+$CPChart->addColors(array("000088", "888800"));<br>
+$CPChart->addLegend(array('1', '2', '3', '4'));<br>
+$CPChart->addLegend(array('1a', '2a', '3a', '4a'));<br>
 </code>
 </p>
 <h2>Line Chart</h2>
@@ -145,7 +152,7 @@ $lineChart->setVisibleAxes(array('x','y'));
 $lineChart->setDataRange(30,130);
 $lineChart->addAxisRange(0, 1, 4, 1);
 $lineChart->addAxisRange(1, 30, 130);
-$lineChart->addLineFill(B,'76A4FB',0,0);
+$lineChart->addLineFill('B','76A4FB',0,0);
 ?>
 <img src="<?php print $lineChart->getUrl();  ?>" /> <br> line chart using the gLineChart class.
 <p>
@@ -159,7 +166,7 @@ $lineChart->setVisibleAxes(array('x','y'));<br>
 $lineChart->setDataRange(30,130);<br>
 $lineChart->addAxisRange(0, 1, 4, 1);<br>
 $lineChart->addAxisRange(1, 30, 130);<br>
-$lineChart->addLineFill(B,'76A4FB',0,0);<br>
+$lineChart->addLineFill('B','76A4FB',0,0);<br>
 </code>
 </p>
 <h2>Line Chart with Grid Lines</h2>
