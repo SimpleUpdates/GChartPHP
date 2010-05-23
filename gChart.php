@@ -516,7 +516,7 @@ class gChart{
 		$this->setProperty('chxl', $this->encodeData(array_merge(array($axisIndex.':'), $axisLabel), '|'), true);
 	}
 	/**
-	 * @brief Specifies the label position on each axis independently.
+	 * @brief Specifies the label positions on each axis independently.
 	 *
 	 * You can specify which axis labels to show, whether using the default labels or custom labels 
 	 * specified using this function. If you do not specify exact positions using this parameter, labels 
@@ -525,15 +525,15 @@ class gChart{
 	 * in bar charts).
 	 *
 	 * @param $axisIndex Integer This is a zero-based index into the axis array specified by setVisibleAxes()
-	 * @param $labelPosition Array The position of the label along the axis. This is a comma-separated list of 
+	 * @param $labelPositions Array The position of the label along the axis. This is a comma-separated list of 
 	 *								numeric values, where each value sets the position of the corresponding label 
 	 *								in the addAxisLabel(): the first entry applies to the first label, and so on.
 	 *								The position is a value in the range for that axis. Note that this will always 
 	 *								be 0—100 unless you have specified a custom range using addAxisRange(). You 
 	 *								must have as many positions as you have labels for that axis.
 	 */
-	public function addAxisLabelPosition($axisIndex, $labelPosition) {
-		$this->setProperty('chxp', $axisIndex.','.$this->encodeData($labelPosition, ','), true);
+	public function addAxisLabelPositions($axisIndex, $labelPositions) {
+		$this->setProperty('chxp', $axisIndex.','.$this->encodeData($labelPositions, ','), true);
 	}
 	/**
 	 * @brief Specifies the data range. 
