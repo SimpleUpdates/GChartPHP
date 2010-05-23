@@ -1,10 +1,13 @@
 <?php
 /**
+ * @mainpage
  * gChartPhp, a php wrapper for  the Google Chart Tools / Image Charts (aka Chart API) {@link http://code.google.com/apis/charttools/}
+ * 
+ * @version 0.5
  */
 
 /**
- * Utility class
+ * @brief Utility class
  *
  * @version 0.2
  * @since 0.4
@@ -75,7 +78,7 @@ class utility{
 }
 
 /**
- * Main class
+ * @brief Main class
  *
  * This is the mainframe of the wrapper
  *
@@ -83,26 +86,27 @@ class utility{
  */
 class gChart{
 	/**
-	 * This variable holds all the chart information.
+	 * @brief This variable holds all the chart information.
 	 * @var array
 	 */
 	private $chart;
 	
 	/**
-	 * API server URL
+	 * @brief API server URL
 	 * @var string
 	 * @usedby getUrl()
 	 */
 	private $baseUrl = "chart.apis.google.com/chart?";
 	
 	/**
-	 * Data set values. Every array entry is a data set.
+	 * @brief Data set values.
+	 * Every array entry is a data set.
 	 * @var array
 	 */
 	protected $values = Array();
 	
 	/**
-	 * Widht of the chart
+	 * @brief Widht of the chart
 	 * @var Integer
 	 */
 	private $width;
@@ -114,7 +118,7 @@ class gChart{
 	}
 	
 	/**
-	 * Height of the chart
+	 * @brief Height of the chart
 	 * @var Integer
 	 */
 	private $height;
@@ -126,6 +130,7 @@ class gChart{
 	}	
 	
 	/**
+	 * @brief Data precision
 	 * Defines the precision of the rounding in textEncodeData(). By default it is 2.
 	 */
 	private $precision = 2;
@@ -137,7 +142,7 @@ class gChart{
 	}
 	
 	/**
-	 * Handles the number of items in the dataset.
+	 * @brief Handles the number of items in the dataset.
 	 */
 	private $dataCount;
 	public function setDataCount($dataCount){
@@ -149,7 +154,7 @@ class gChart{
 	}
 	
 	/**
-	 * Data encoding char
+	 * @brief Data encoding char
 	 * @var char
 	 */
 	private $dataEncodingType = 't';
@@ -189,7 +194,7 @@ class gChart{
 	}
 	
 	/**
-	 * Adds a data set
+	 * @brief Adds a data set
 	 *
 	 * @param $data Array Data Set values
 	 */
@@ -197,7 +202,9 @@ class gChart{
 		array_push($this->values, $data);
 	}
 	/**
-	 * Adds a hidden data set. Use this function, used with addValueMarkers(), to build compound charts
+	 * @brief Adds a hidden data set.
+	 * 
+	 * Use this function, used with addValueMarkers(), to build compound charts
 	 *
 	 * @param $hiddenData Array Data Set values
 	 */
@@ -210,7 +217,7 @@ class gChart{
 		$this->values = Array();
 	}
 	/**
-	 * Encodes the data as Basic Text and Text Format with Custom Scaling. 
+	 * @brief Encodes the data as Basic Text and Text Format with Custom Scaling. 
 	 *
 	 * This specifies floating point values from 0-100, inclusive, as numbers. If user sets data range,
 	 * with setDataRange(), the function will do nothig and Google API will render the inage in those
@@ -243,8 +250,9 @@ class gChart{
 		return $encodedData;
 	}
 	/**
-	 * Encodes the data as Simple Text. This specifies integer values from 0-61, inclusive, encoded by a single 
-	 * alphanumeric character. This results in the shortest data string URL of all the data formats.
+	 * @brief Encodes the data as Simple Text.
+	 * This specifies integer values from 0-61, inclusive, encoded by a single alphanumeric character. 
+	 * This results in the shortest data string URL of all the data formats.
 	 *
 	 * @todo Add support for missing values
 	 */
@@ -283,8 +291,9 @@ class gChart{
 		return $encodedData;
 	}
 	/**
-	 * Encodes the data as Extended Text. This specifies integer values from 0-4095, inclusive, encoded by 
-	 * two alphanumeric characters.
+	 * @brief Encodes the data as Extended Text.
+	 * 
+	 * This specifies integer values from 0-4095, inclusive, encoded by two alphanumeric characters.
 	 *
 	 * @todo Add support for missing values
 	 */
@@ -347,28 +356,26 @@ class gChart{
 	}
 	
 	/**
-	 * Returns the applicable labels, based on the number of data sets of the chart.
+	 * @brief Returns the applicable labels, based on the number of data sets of the chart.
 	 */
 	public function getApplicableLabels($labels){
 		return array_splice($labels, 0, count($this->values));
 	}
 	
 	/**
-	 * Server number processing the chart
+	 * @brief Server number processing the chart
 	 * @var Integer
 	 */
 	private $serverNum;
 	/**
-	 * Sets server number processing the chart.
-	 *
+	 * @brief Sets server number processing the chart.
 	 * @param $newServerNum Integer The server number. The function will scale this number to the range 0-9
 	 */
 	public function setServerNumber($newServerNum){
 		$this->serverNum = $newServerNum % 10;
 	}
 	/**
-	 * Returns the server number processing the chart
-	 *
+	 * @brief Returns the server number processing the chart
 	 * @return Integer
 	 */
 	public function getServerNumber(){
@@ -376,7 +383,7 @@ class gChart{
 	}
 	
 	/**
-	 * Sets the chart property
+	 * @brief Sets the chart property
 	 * @param $key String Name of the chart parameter
 	 * @param $value String Value of the chart parameter
 	 */
@@ -388,7 +395,7 @@ class gChart{
 		}
 	}
 	/**
-	 * Sets chart dimensions.
+	 * @brief Sets chart dimensions.
 	 *
 	 * Sets chart dimension using chs parameter. This checks of $width and $height are 
 	 * defined because in gFormula 0s are used as default values to let the server 
@@ -408,7 +415,7 @@ class gChart{
 			$this -> setProperty('chs', $height);
 	}
 	/**
-	 * Sets the colors for element of the chart.
+	 * @brief Sets the colors for element of the chart.
 	 *
 	 * This is the basic function. The data in the array are interpreted as one color one data set.
 	 *
@@ -419,7 +426,7 @@ class gChart{
 		$this -> setProperty('chco', $this->encodeData($this->getApplicableLabels($colors),","));
 	}
 	/**
-	 * Sets the labels for the legend
+	 * @brief Sets the labels for the legend
 	 *
 	 * @param $labels Array
 	 */
@@ -427,7 +434,7 @@ class gChart{
 		$this -> setProperty('chdl', urlencode($this->encodeData($this->getApplicableLabels($labels),"|")));
 	}
 	/**
-	 * Sets the position and the order of the legend
+	 * @brief Sets the position and the order of the legend
 	 *
 	 * @param $position String Please refer to the documentation for the acceptable values
 	 * @param $order String Please refer to the documentation for the acceptable values
@@ -440,7 +447,9 @@ class gChart{
 		}
 	}
 	/**
-	 * Sets the title. You cannot specify where this appears.
+	 * @brief Sets the title.
+	 * 
+	 * You cannot specify where this appears.
 	 *
 	 * @param $title String Title to show for the chart. Use \r\n for a new line.
 	 */
@@ -450,7 +459,7 @@ class gChart{
 		$this -> setProperty('chtt', $title);
 	}
 	/**
-	 *	Sets font size and color of the title
+	 *	@brief Sets font size and color of the title
 	 * 
 	 * @param $color String The title color, in RRGGBB hexadecimal format. Default color is black.
 	 * @param $size Integer Font size of the title, in points.
@@ -459,7 +468,7 @@ class gChart{
 		$this -> setProperty('chts', $color.','.$size);
 	}
 	/**
-	 * Specifies the size of the chart's margins, in pixels.
+	 * @brief Specifies the size of the chart's margins, in pixels.
 	 *
 	 * You can specify the size of the chart's margins, in pixels. Margins are calculated inward from the 
 	 * specified chart size (chs); increasing the margin size does not increase the total chart size, but 
@@ -473,8 +482,8 @@ class gChart{
 		if (!empty($legendMargins))
 			$this -> setProperty('chma', $this -> encodeData($legendMargins, ','), true);
 	}
-		/**
-	 * Sets visible axes.
+	/**
+	 * @brief Sets visible axes.
 	 *
 	 * @param $visibleAxes Array Visible axis labels. Please refer to the documentation for the acceptable values
 	 */
@@ -482,7 +491,7 @@ class gChart{
 		$this->setProperty('chxt', $this->encodeData($visibleAxes,','));
 	}
 	/**
-	 * Specifies the range of values that appear on each axis independently.
+	 * @brief Specifies the range of values that appear on each axis independently.
 	 *
 	 * @param $axisIndex Integer This is a zero-based index into the axis array specified by setVisibleAxes
 	 * @param $startVal Integer A number, defining the low value for this axis.
@@ -498,7 +507,7 @@ class gChart{
 		$this -> setProperty('chxr', $this->encodeData($axisRange, ',') , true);
 	}
 	/**
-	 * Specifies the labels that appear on each axis independently.
+	 * @brief Specifies the labels that appear on each axis independently.
 	 *
 	 * @param $axisIndex Integer This is a zero-based index into the axis array specified by setVisibleAxes
 	 * @param $axisLabel Array One or more labels to place along this axis.
@@ -507,7 +516,29 @@ class gChart{
 		$this->setProperty('chxl', $this->encodeData(array_merge(array($axisIndex.':'), $axisLabel), '|'), true);
 	}
 	/**
-	 * Specifies the data range. Note that this does not change the axis range; to change the axis range, you must 
+	 * @brief Specifies the label position on each axis independently.
+	 *
+	 * You can specify which axis labels to show, whether using the default labels or custom labels 
+	 * specified using this function. If you do not specify exact positions using this parameter, labels 
+	 * will be spaced evenly and at a default step value along the axes. If you do not call this function, 
+	 * then the tick mark labels will be the default values (typically data values, or the bar numbers 
+	 * in bar charts).
+	 *
+	 * @param $axisIndex Integer This is a zero-based index into the axis array specified by setVisibleAxes()
+	 * @param $labelPosition Array The position of the label along the axis. This is a comma-separated list of 
+	 *								numeric values, where each value sets the position of the corresponding label 
+	 *								in the addAxisLabel(): the first entry applies to the first label, and so on.
+	 *								The position is a value in the range for that axis. Note that this will always 
+	 *								be 0—100 unless you have specified a custom range using addAxisRange(). You 
+	 *								must have as many positions as you have labels for that axis.
+	 */
+	public function addAxisLabelPosition($axisIndex, $labelPosition) {
+		$this->setProperty('chxp', $axisIndex.','.$this->encodeData($labelPosition, ','), true);
+	}
+	/**
+	 * @brief Specifies the data range. 
+	 * 
+	 * Note that this does not change the axis range; to change the axis range, you must 
 	 * use the setAxisRange function.
 	 *
 	 * @param $startVal Integer A number, definig the low value for the data set. Usually, it is the same as $startVal in addAxisRange
@@ -517,6 +548,8 @@ class gChart{
 		$this->setProperty('chds', $startVal.','.$endVal);
 	}
 	/**
+	 * @brief Adds the background fill 
+	 *
 	 * Specifies a solid fill for the background and/or chart area, or assign a transparency value to the whole chart.
 	 *
 	 * @param $fillType String The part of the chart being filled. Please refer to the documentation for the acceptable values
@@ -527,7 +560,7 @@ class gChart{
 		$this->setProperty('chf', $this->encodeData(array($fillType, 's', $color), ','), true);
 	}
 	/**
-	 * Applies one or more gradient fills to chart areas or backgrounds.
+	 * @brief Applies one or more gradient fills to chart areas or backgrounds.
 	 *
 	 * Each gradient fill specifies an angle, and then two or more colors anchored to a specified location. The color varies 
 	 * as it moves from one anchor to another. You must have at least two colors with different <color_centerpoint>  values, 
@@ -545,7 +578,7 @@ class gChart{
 		$this->setProperty('chf', $this->encodeData(array_merge(array($fillType, 'lg', $fillAngle), $colors), ','));
 	}
 	/**
-	 * Specifies a striped background fill for your chart area, or the whole chart. 
+	 * @brief Specifies a striped background fill for your chart area, or the whole chart. 
 	 *
 	 * @param $fillType String The part of the chart being filled. Please refer to the documentation for the acceptable values
 	 * @param $fillAngle Integer A number specifying the angle of the gradient from 0 (horizontal) to 90 (vertical). 
@@ -559,7 +592,7 @@ class gChart{
 		$this->setProperty('chf', $this->encodeData(array_merge(array($fillType, 'ls', $fillAngle), $colors), ','));
 	}
 	/**
-	 * Fills the area below a data line with a solid color.
+	 * @brief Fills the area below a data line with a solid color.
 	 *
 	 * @param $where Whether to fill to the bottom of the chart, or just to the next lower line. Must be B or b. Please refer to
 	 *				 the documentation for the acceptable values
@@ -572,7 +605,7 @@ class gChart{
 		$this->setProperty('chm', $this->encodeData(array($where, $color, $startLineIndex, $endLineIndex, 0),','), true);
 	}
 	/**
-	 * Specifies solid or dotted grid lines on your chart
+	 * @brief Specifies solid or dotted grid lines on your chart
 	 *
 	 * @param $xAxisStepSize Ingeger Used to calculate how many x grid lines to show on the chart. 100 / step_size = how many grid lines on the chart.
 	 * @param $yAxisStepSize Integer Used to calculate how many x or y grid lines to show on the chart. 100 / step_size = how many grid lines on the chart.
@@ -585,7 +618,7 @@ class gChart{
 		$this->setProperty('chg', $this->encodeData(array($xAxisStepSize, $yAxisStepSize, $dashLength, $spaceLength, $xOffset, $yOffset), ','));
 	}
 	/**
-	 * Labels specific points on your chart with custom text, or with formatted versions of the data at that point.
+	 * @brief Labels specific points on your chart with custom text, or with formatted versions of the data at that point.
 	 *
 	 * Please note that this function has an variable number of input variables. The order of the variable must be the following:
 	 *	- marker_type: The type of marker to use. Please refer to the documentation for usage.
@@ -603,7 +636,7 @@ class gChart{
 	}
 	
 	/**
-	 * Prepares the Data Set String
+	 * @brief Prepares the Data Set String
 	 */
 	protected function setDataSetString() {
 		if(!utility::isArrayEmpty($this->values)) {
@@ -612,7 +645,7 @@ class gChart{
 	}
 	
 	/**
-	 * Returns the url code for the image.
+	 * @brief Returns the url code for the image.
 	 */
 	public function getUrl(){
 		$fullUrl = "http://";
@@ -626,7 +659,9 @@ class gChart{
 		return $fullUrl;
 	}
 	/**
-	 * Returns the html img code. This code is HTML 4.01 strict compliant.
+	 * @brief Returns the html img code.
+	 * 
+	 * This code is HTML 4.01 strict compliant.
 	 */
 	public function getImgCode(){
 		$code = '<img src="';
@@ -657,7 +692,7 @@ class gPieChart extends gChart{
 		}
 	}
 	/**
-	 * Sets the labels for Pie Charts
+	 * @brief Sets the labels for Pie Charts
 	 *
 	 * @param $labels Array
 	 */
@@ -665,7 +700,7 @@ class gPieChart extends gChart{
 		$this -> setProperty('chl', urlencode($this->encodeData($this->getApplicableLabels($labels),"|")));
 	}
 	/**
-	 * Rotates the chart.
+	 * @brief Rotates the chart.
 	 *
 	 * By default, the first series is drawn starting at 3:00, continuing clockwise around the chart, but 
 	 * you can specify a custom rotation using this function.
@@ -680,7 +715,7 @@ class gPieChart extends gChart{
 		$this -> setProperty('chp', $angle);
 	}
 	/**
-	 * Sets the colors for element of the chart.
+	 * @brief Sets the colors for element of the chart.
 	 *
 	 * This is the basic function. The data in the array are interpreted as one color one slice. If you are
 	 * using gConcentricPieChart(), consider using setColors() for more customization.
@@ -692,7 +727,7 @@ class gPieChart extends gChart{
 		$this -> setProperty('chco', $this->encodeData($this->getApplicableLabels($colors), "|"), true);
 	}
 	/**
-	 * Sets colors for each data set.
+	 * @brief Sets colors for each data set.
 	 *
 	 * This function allows you to specify colors for each individual slice of the chart or to specify a 
 	 * color gradient. Usage:
@@ -710,7 +745,7 @@ class gPieChart extends gChart{
 	}
 }
 /**
- * 3-dimensional Pie Chart
+ * @brief 3-dimensional Pie Chart
  */
 class gPie3DChart extends gPieChart {
 	function __construct($width = 500, $height = 200) {
@@ -719,7 +754,7 @@ class gPie3DChart extends gPieChart {
 	}
 }
 /**
- * Concentric Pie Chart
+ * @brief Concentric Pie Chart
  */
 class gConcentricPieChart extends gPieChart {
 	function __construct($width = 350, $height = 200) {
@@ -727,15 +762,16 @@ class gConcentricPieChart extends gPieChart {
 		$this -> setDimensions($width, $height);
 	}
 	/**
-	 * Returns the applicable labels for the chart.
+	 * @brief Returns the applicable labels for the chart.
 	 * 
 	 * This function counts recursively the numeber of values in the $values array.
+	 * @return Array Applicable labels
 	 */
 	public function getApplicableLabels($labels) {
 		return array_splice($labels, 0, utility::count_r($this->values));
 	}
 	/**
-	 * Adds the legend for Concentric Pie Charts
+	 * @brief Adds the legend for Concentric Pie Charts
 	 *
 	 * Run an instance of this function for each data set.
 	 *
@@ -760,7 +796,7 @@ class gLineChart extends gChart{
 
 class gBarChart extends gChart{
 	/**
-	 * Constructor for the gBarChart
+	 * @brief Constructor for the gBarChart
 	 *
 	 * With this constructor you can specify all the type of Bar Charts.
 	 *
@@ -781,7 +817,7 @@ class gBarChart extends gChart{
 		return $retStr;
 	}
 	/**
-	 * Specifies custom values for bar widths and spacing between bars and groups.
+	 * @brief Specifies custom values for bar widths and spacing between bars and groups.
 	 *
 	 * You can only specify one set of width values for all bars. If you don't set this, all bars will be 23 pixels wide, 
 	 * which means that the end bars can be clipped if the total bar + space width is wider than the chart width.
@@ -797,13 +833,13 @@ class gBarChart extends gChart{
 		$this -> setProperty('chbh', $this->encodeData(array($barWidth, $spaceBetweenBars,$spaceBetweenGroups), ','));
 	}
 	/**
-	 * Resize values automatically
+	 * @brief Resize values automatically
 	 */
 	public function setAutoBarWidth() {
 		$this -> setProperty('chbh', 'a');
 	}
 	/**
-	 * Specify custom values for bar widths and spacing between bars and groups.
+	 * @brief Specify custom values for bar widths and spacing between bars and groups.
 	 *
 	 * You can specify widths and spacing absolutely or relatively, by entering one of the following values.
 	 *
@@ -824,7 +860,7 @@ class gBarChart extends gChart{
 		$this -> setProperty('chbh', $this->encodeData(array($barScale, $spaceBetweenBars,$spaceBetweenGroups), ','));
 	}
 	/**
-	 * Sets colors for each data set.
+	 * @brief Sets colors for each data set.
 	 *
 	 * This function allows you to specify colors for each individual slice of the chart or to specify a 
 	 * color gradient. Usage:
@@ -967,7 +1003,7 @@ class gQRCode extends gChart{
 
 class gMeterChart extends gChart{
 	/**
-	 * Google-o-Meter Chart constructor.
+	 * @brief Google-o-Meter Chart constructor.
 	 *
 	 * Please see documentation for specia usage of functions setVisibleAxes(), addAxisLabel(), and setColors().
 	 */
@@ -978,11 +1014,21 @@ class gMeterChart extends gChart{
 	public function getApplicableLabels($labels) {
 		return array_splice($labels, 0, count($this->values[0]));
 	}
+	/**
+	 * @brief Sets the labels for each arrow
+	 *
+	 * You can obtain the same result of this function by setting visible axis x and adding the labels on that axis.
+	 */
+	public function setLabels($labels) {
+		$this -> setProperty('chl', urlencode($this->encodeData($this->getApplicableLabels($labels),"|")));
+	}
 }
 
 class gMapChart extends gChart {
 	/**
-	 * Map Chart constructor. Maximum size for a map is 440x220, this is the defaul size.
+	 * @brief Map Chart constructor. 
+	 * 
+	 * Maximum size for a map is 440x220, this is the defaul size.
 	 */
 	function __construct($width = 440, $height = 220){
 		$this -> setDimensions($width, $height);
@@ -990,7 +1036,7 @@ class gMapChart extends gChart {
 	}
 	
 	/**
-	 * Geographical area shown in the chart.
+	 * @brief Geographical area shown in the chart.
 	 *
 	 * @param $zoomArea String One of the following values: africa, asia, europe, middle_east, south_america, usa, world
 	 */
@@ -998,7 +1044,7 @@ class gMapChart extends gChart {
 		$this -> setProperty('chtm', $zoomArea);
 	}
 	/**
-	 * A list of countries or states to which you are applying values. 
+	 * @brief A list of countries or states to which you are applying values. 
 	 *
 	 * @param $stateCodes Array These are a set of two-character codes. Use either of the following types (you cannot mix types):
 	 *							ISO 3166-1-alpha-2 codes for countries, {@link http://www.iso.org/iso/english_country_names_and_code_elements}
@@ -1008,7 +1054,7 @@ class gMapChart extends gChart {
 		$this -> setProperty('chld', $this->encodeData($stateCodes, ''));
 	}
 	/**
-	 * Specifies the colors of the chart
+	 * @brief Specifies the colors of the chart
 	 *
 	 * @param $defaultColor String The color of regions that do not have data assigned. An RRGGBB format hexadecimal number. The default is BEBEBE (medium gray). 
 	 * @param $gradientColors Array The colors corresponding to the gradient values in the data format range. RRGGBB format hexadecimal numbers.
@@ -1026,13 +1072,17 @@ class gScatterChart extends gChart{
 		$this -> setProperty('cht','s');
 	}
 	/**
+	 * @brief Returns the applicable labels
+	 *
 	 * There is no reason to use this function. Please refer to the documentation to know how to use colors and legend.
 	 */
 	public function getApplicableLabels($labels) {
 		return $labels;
 	}
 	/**
-	 * Sets the colors for the chart. It has a different separator than the one in the parent class
+	 * @brief Sets the colors for the chart.
+	 * 
+	 * It has a different separator than the one in the parent class
 	 */
 	public function setColors($colors) {
 		$this -> setProperty('chco', $this->encodeData($this->getApplicableLabels($colors),"|"));
