@@ -369,6 +369,7 @@ $map = new gMapChart();
 $map -> setZoomArea('usa');
 $map -> setStateCodes(array('CA', 'TX', 'NY', 'UT', 'NV'));
 $map -> addDataSet(array(23, 32, 12, 54, 23));
+$map -> setColors('342544', array('BE3481','34BE12'));
 ?>
 <img src="<?php print $map->getUrl();  ?>" /> <br> Map Chart using the gMapChart class.
 <p>
@@ -378,6 +379,7 @@ $map = new gMapChart();<br>
 $map -> setZoomArea('usa');<br>
 $map -> setStateCodes(array('CA', 'TX', 'NY', 'UT', 'NV'));<br>
 $map -> addDataSet(array(23, 32, 12, 54, 23));<br>
+$map -> setColors('342544', array('BE3481','34BE12'));<br>
 </code>
 </p>
 <h2>Scatter Chart</h2>

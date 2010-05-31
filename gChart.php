@@ -3,7 +3,7 @@
  * @mainpage
  * gChartPhp, a php wrapper for  the Google Chart Tools / Image Charts (aka Chart API) {@link http://code.google.com/apis/charttools/}
  * 
- * @version 0.5
+ * @version 0.5.2
  */
 
 /**
@@ -13,50 +13,6 @@
  * @since 0.4
  */
 class utility{
-	public static function count_r($mixed){
-		$totalCount = 0;
-		
-		foreach($mixed as $temp){
-			if(is_array($temp)){
-				$totalCount += utility::count_r($temp);
-			}
-			else{
-				$totalCount += 1;
-			}
-		}
-		return $totalCount;
-	}
-	
-	public static function addArrays($mixed){
-		$summedArray = array_fill(0,count($mixed)+1,0);
-		
-		foreach($mixed as $temp){
-			$a=0;
-			if(is_array($temp)){
-				foreach($temp as $tempSubArray){
-					$summedArray[$a] += $tempSubArray;
-					$a++;
-				}
-			}
-			else{
-				$summedArray[$a] += $temp;
-			}
-		}
-		return $summedArray;
-	}
-	
-	public static function getMaxCountOfArray($ArrayToCheck){
-		$maxValue = count($ArrayToCheck);
-		
-		foreach($ArrayToCheck as $temp){
-			if(is_array($temp)){
-				$maxValue = max($maxValue, utility::getMaxCountOfArray($temp));
-			}
-		}
-		return $maxValue;
-		
-	}
-	
 	public static function getMaxOfArray($ArrayToCheck){
 		$maxValue = 0;
 		
@@ -70,11 +26,6 @@ class utility{
 		}
 		return $maxValue;
 	}
-	
-	public static function isArrayEmpty($array) {
-		return empty($array);
-	}
-	
 }
 
 /**
@@ -82,7 +33,7 @@ class utility{
  *
  * This is the mainframe of the wrapper
  *
- * @version 0.5
+ * @version 0.5.2
  */
 class gChart{
 	/**
@@ -420,7 +371,7 @@ class gChart{
 	 * This is the basic function. The data in the array are interpreted as one color one data set.
 	 *
 	 * @param $colors Array Specifies colors using a 6-character string of hexadecimal values, 
-	 *						plus two optional transparency values, in the format RRGGBB[AA]. 
+	 *                      plus two optional transparency values, in the format RRGGBB[AA]. 
 	 */
 	public function setColors($colors) {
 		$this -> setProperty('chco', $this->encodeData($this->getApplicableLabels($colors),","));
@@ -497,7 +448,7 @@ class gChart{
 	 * @param $startVal Integer A number, defining the low value for this axis.
 	 * @param $endVal Integer A number, defining the high value for this axis.
 	 * @param $stem Integer The count step between ticks on the axis. There is no default step value; the step 
-	 *						is calculated to try to show a set of nicely spaced labels.
+	 *                      is calculated to try to show a set of nicely spaced labels.
 	 */
 	public function addAxisRange($axisIndex, $startVal, $endVal, $step = null) {
 		if (is_null($step))
@@ -526,11 +477,11 @@ class gChart{
 	 *
 	 * @param $axisIndex Integer This is a zero-based index into the axis array specified by setVisibleAxes()
 	 * @param $labelPositions Array The position of the label along the axis. This is a comma-separated list of 
-	 *								numeric values, where each value sets the position of the corresponding label 
-	 *								in the addAxisLabel(): the first entry applies to the first label, and so on.
-	 *								The position is a value in the range for that axis. Note that this will always 
-	 *								be 0—100 unless you have specified a custom range using addAxisRange(). You 
-	 *								must have as many positions as you have labels for that axis.
+	 *                              numeric values, where each value sets the position of the corresponding label 
+	 *                              in the addAxisLabel(): the first entry applies to the first label, and so on.
+	 *                              The position is a value in the range for that axis. Note that this will always 
+	 *                              be 0—100 unless you have specified a custom range using addAxisRange(). You 
+	 *                              must have as many positions as you have labels for that axis.
 	 */
 	public function addAxisLabelPositions($axisIndex, $labelPositions) {
 		$this->setProperty('chxp', $axisIndex.','.$this->encodeData($labelPositions, ','), true);
@@ -554,7 +505,7 @@ class gChart{
 	 *
 	 * @param $fillType String The part of the chart being filled. Please refer to the documentation for the acceptable values
 	 * @param $color String The fill color, in RRGGBB hexadecimal format. For transparencies, the first six digits are ignored, 
-	 *						but must be included anyway.
+	 *                      but must be included anyway.
 	 */
 	public function addBackgroundFill($fillType, $color) {
 		$this->setProperty('chf', $this->encodeData(array($fillType, 's', $color), ','), true);
@@ -569,10 +520,10 @@ class gChart{
 	 * @param $fillType String The part of the chart being filled. Please refer to the documentation for the acceptable values
 	 * @param $fillAngle Integer A number specifying the angle of the gradient from 0 (horizontal) to 90 (vertical). 
 	 * @param $colors Array An array of couples <color> (The color of the fill, in RRGGBB hexadecimal format) and 
-	 *						<color_centerpoint> (Specifies the anchor point for the color. The color will start to fade from this 
-	 *						point as it approaches another anchor. The value range is from 0.0 (bottom or left edge) to 1.0 (top 
-	 *						or right edge), tilted at the angle specified by <angle>). Please define it in this way:
-	 *						array(<color_1>,<color_centerpoint_1>,...,<color_n>,<color_centerpoint_n>).
+	 *                      <color_centerpoint> (Specifies the anchor point for the color. The color will start to fade from this 
+	 *                      point as it approaches another anchor. The value range is from 0.0 (bottom or left edge) to 1.0 (top 
+	 *                      or right edge), tilted at the angle specified by <angle>). Please define it in this way:
+	 *                      array(<color_1>,<color_centerpoint_1>,...,<color_n>,<color_centerpoint_n>).
 	 */
 	public function setGradientFill($fillType, $fillAngle, $colors) {
 		$this->setProperty('chf', $this->encodeData(array_merge(array($fillType, 'lg', $fillAngle), $colors), ','));
@@ -583,10 +534,10 @@ class gChart{
 	 * @param $fillType String The part of the chart being filled. Please refer to the documentation for the acceptable values
 	 * @param $fillAngle Integer A number specifying the angle of the gradient from 0 (horizontal) to 90 (vertical). 
 	 * @param $colors Array An array of couples <color> (The color of the fill, in RRGGBB hexadecimal format) and <width>
-     *						(The width of this stripe, from 0 to 1, where 1 is the full width of the chart. Stripes are repeated 
-	 *						until the chart is filled. Repeat <color> and <width> for each additional stripe. You must have at 
-	 *						least two stripes. Stripes alternate until the chart is filled).	Please define it in this way:
-	 *						array(<color_1>,<width_1>,...,<color_n>,<width_n>).
+     *                      (The width of this stripe, from 0 to 1, where 1 is the full width of the chart. Stripes are repeated 
+     *                      until the chart is filled. Repeat <color> and <width> for each additional stripe. You must have at 
+     *                      least two stripes. Stripes alternate until the chart is filled).	Please define it in this way:
+     *                      array(<color_1>,<width_1>,...,<color_n>,<width_n>).
 	 */
 	public function setStripFill($fillType, $fillAngle, $colors) {
 		$this->setProperty('chf', $this->encodeData(array_merge(array($fillType, 'ls', $fillAngle), $colors), ','));
@@ -594,12 +545,13 @@ class gChart{
 	/**
 	 * @brief Fills the area below a data line with a solid color.
 	 *
-	 * @param $where Whether to fill to the bottom of the chart, or just to the next lower line. Must be B or b. Please refer to
-	 *				 the documentation for the acceptable values
-	 * @param $color An RRGGBB format hexadecimal number of the fill color
-	 * @param $startLineIndex The index of the line at which the fill starts. The first data series specified in addDataSet() has an 
-	 *						  index of zero (0), the second data series has an index of 1, and so on.
-	 * @param $endLineIndex Please refer to the documentation for the usage of this parameter.
+	 * @param $where Char Whether to fill to the bottom of the chart, or just to the next lower line. 
+	 *                    Must be B or b. Please refer to the documentation for the acceptable values
+	 * @param $color String An RRGGBB format hexadecimal number of the fill color
+	 * @param $startLineIndex Integer The index of the line at which the fill starts. The first data 
+	 *                                series specified in addDataSet() has an index of zero (0), the 
+	 *                                second data series has an index of 1, and so on.
+	 * @param $endLineIndex Integer Please refer to the documentation for the usage of this parameter.
 	 */
 	public function addLineFill($where, $color, $startLineIndex, $endLineIndex) {
 		$this->setProperty('chm', $this->encodeData(array($where, $color, $startLineIndex, $endLineIndex, 0),','), true);
@@ -607,10 +559,13 @@ class gChart{
 	/**
 	 * @brief Specifies solid or dotted grid lines on your chart
 	 *
-	 * @param $xAxisStepSize Ingeger Used to calculate how many x grid lines to show on the chart. 100 / step_size = how many grid lines on the chart.
-	 * @param $yAxisStepSize Integer Used to calculate how many x or y grid lines to show on the chart. 100 / step_size = how many grid lines on the chart.
+	 * @param $xAxisStepSize Ingeger Used to calculate how many x grid lines to show on the chart. 
+	 *                               100 / step_size = how many grid lines on the chart.
+	 * @param $yAxisStepSize Integer Used to calculate how many x or y grid lines to show on the chart. 
+	 *                               100 / step_size = how many grid lines on the chart.
 	 * @param $dashLength Integerthe Length of each line dash, in pixels. By default it is 4
-	 * @param $spaceLength Integer The spacing between dashes, in pixels. Specify 0 for for a solid line. By default it is 1
+	 * @param $spaceLength Integer The spacing between dashes, in pixels. Specify 0 for for a solid line. 
+	 *                             By default it is 1
 	 * @param $xOffset Integer The number of units, according to the chart scale, to offset the x grid line.
 	 * @param $yOffset Integer The number of units, according to the chart scale, to offset the y grid line.
 	 */
@@ -620,14 +575,19 @@ class gChart{
 	/**
 	 * @brief Labels specific points on your chart with custom text, or with formatted versions of the data at that point.
 	 *
-	 * Please note that this function has an variable number of input variables. The order of the variable must be the following:
+	 * Please note that this function has an variable number of input variables. The order of the variable 
+	 * must be the following:
 	 *	- marker_type: The type of marker to use. Please refer to the documentation for usage.
 	 *	- color: The color of the markers for this set, in RRGGBB hexadecimal format.
-	 *	- series_index: The zero-based index of the data series on which to draw the markers. The index is defined by the order of addDataSet()
-	 *	- which_points: [Optional] Which point(s) to draw markers on. Default is all markers. Use '' (blank string) for default.
+	 *	- series_index: The zero-based index of the data series on which to draw the markers. The index is 
+	 *    defined by the order of addDataSet()
+	 *	- which_points: [Optional] Which point(s) to draw markers on. Default is all markers. Use '' (blank 
+	 *    string) for default.
 	 *	- size: The size of the marker in pixels.
-	 *	- z_order: [Optional] The layer on which to draw the marker, compared to other markers and all other chart elements.
-	 *	- placement: [Optional] Additional placement details describing where to put this marker, in relation to the data point. 
+	 *	- z_order: [Optional] The layer on which to draw the marker, compared to other markers and all other 
+	 *    chart elements.
+	 *	- placement: [Optional] Additional placement details describing where to put this marker, in relation 
+	 *    to the data point. 
 	 * You can omit the last two values when using this function.
 	 */
 	public function addValueMarkers() {
@@ -639,7 +599,7 @@ class gChart{
 	 * @brief Prepares the Data Set String
 	 */
 	protected function setDataSetString() {
-		if(!utility::isArrayEmpty($this->values)) {
+		if(!empty($this->values)) {
 			$this -> setProperty('chd', $this->getEncodingType().$this->getDataCount().':'.$this->encodeData($this->values,',',$this->getEncodingType()));
 		}
 	}
@@ -706,7 +666,7 @@ class gPieChart extends gChart{
 	 * you can specify a custom rotation using this function.
 	 *
 	 * @param $angle Integer A floating point value describing how many radians to rotate the chart clockwise. 
-	 * 						 One complete turn is 2 pi radiants (2 pi is about 6.2831).
+	 *                       One complete turn is 2 pi radiants (2 pi is about 6.2831).
 	 * @param $degree Bool Specifies if $angle is in degrees and not in radians. The function will to the conversion.
 	 */
 	public function setRotation($angle, $degree = false) {
@@ -721,7 +681,7 @@ class gPieChart extends gChart{
 	 * using gConcentricPieChart(), consider using setColors() for more customization.
 	 *
 	 * @param $colors Array Specifies colors using a 6-character string of hexadecimal values, 
-	 *						plus two optional transparency values, in the format RRGGBB[AA]. 
+	 *                      plus two optional transparency values, in the format RRGGBB[AA]. 
 	 */
 	public function setColors($colors) {
 		$this -> setProperty('chco', $this->encodeData($this->getApplicableLabels($colors), "|"), true);
@@ -738,7 +698,7 @@ class gPieChart extends gChart{
 	 * If you are using gConcentricPie class, run an instance of this function for each data set.
 	 *
 	 * @param $colors Array Specifies colors using a 6-character string of hexadecimal values,
-	 * 						plus two optional transparency values, in the format RRGGBB[AA]
+	 *                      plus two optional transparency values, in the format RRGGBB[AA]
 	 */
 	public function addColors($colors) {
 		$this -> setProperty('chco', $this->encodeData($colors, "|"), true, ",");
@@ -768,7 +728,7 @@ class gConcentricPieChart extends gPieChart {
 	 * @return Array Applicable labels
 	 */
 	public function getApplicableLabels($labels) {
-		return array_splice($labels, 0, utility::count_r($this->values));
+		return array_splice($labels, 0, count($this->values, COUNT_RECURSIVE));
 	}
 	/**
 	 * @brief Adds the legend for Concentric Pie Charts
@@ -822,12 +782,12 @@ class gBarChart extends gChart{
 	 * You can only specify one set of width values for all bars. If you don't set this, all bars will be 23 pixels wide, 
 	 * which means that the end bars can be clipped if the total bar + space width is wider than the chart width.
 	 *
-	 * @param $barWidth Integer The width of the bar. You can specify widths and spacing absolutely. Default value is 23 pixels, 
-	 *							absolute value.
+	 * @param $barWidth Integer The width of the bar. You can specify widths and spacing absolutely. Default 
+	 *                          value is 23 pixels, absolute value.
 	 * @param $spaceBetweenBars Integer Space between bars in the same group. This is a width in pixels. Default value is 4 pixels 
-	 *									for absolute values.
+	 *                                  for absolute values.
 	 * @param $spaceBetweenGroups Integer Space between bar groups in the same group. This is a width in pixels; Default value 
-	 *									  is 8 pixels for absolute values.
+	 *                                    is 8 pixels for absolute values.
 	 */
 	public function setBarWidth($barWidth, $spaceBetweenBars = 4,$spaceBetweenGroups = 8){
 		$this -> setProperty('chbh', $this->encodeData(array($barWidth, $spaceBetweenBars,$spaceBetweenGroups), ','));
@@ -844,17 +804,17 @@ class gBarChart extends gChart{
 	 * You can specify widths and spacing absolutely or relatively, by entering one of the following values.
 	 *
 	 * @param $barScale String You can specify widths and spacing absolutely or relatively, by entering one of the following values:
-	 *							a - space_between_bars and space_between_groups  are given in absolute units (or default absolute 
-	 *								values, if not specified). Bars will be resized so that all bars will fit in the chart.
-	 *							r - space_between_bars and space_between_groups are given in relative units (or default relative values, 
-	 *								if not specified) Relative units are floating point values compared to the bar width, where the bar 
-	 *								width is 1.0: for example, 0.5 is half the bar width, 2.0 is twice the bar width. Bars can be clipped 
-	 *								if the chart isn't wide enough.
-	 *						   Default value is 'a'
+	 *                         - a: space_between_bars and space_between_groups  are given in absolute units (or default absolute 
+	 *                             values, if not specified). Bars will be resized so that all bars will fit in the chart.
+	 *                         - r: space_between_bars and space_between_groups are given in relative units (or default relative values, 
+	 *                              if not specified) Relative units are floating point values compared to the bar width, where the bar 
+	 *                              width is 1.0: for example, 0.5 is half the bar width, 2.0 is twice the bar width. Bars can be clipped 
+	 *                              if the chart isn't wide enough.
+	 *                         Default value is 'a'
 	 * @param $spaceBetweenBars Integer Space between bars in the same group. This is a width in pixels. Default value is 4 pixels 
-	 *									for absolute values.
+	 *                                  for absolute values.
 	 * @param $spaceBetweenGroups Integer Space between bar groups in the same group. This is a width in pixels; Default value 
-	 *									  is 8 pixels for absolute values.
+	 *                                    is 8 pixels for absolute values.
 	 */
 	public function setBarScale($barScale = 'a', $spaceBetweenBars = '4',$spaceBetweenGroups = '8') {
 		$this -> setProperty('chbh', $this->encodeData(array($barScale, $spaceBetweenBars,$spaceBetweenGroups), ','));
@@ -864,11 +824,11 @@ class gBarChart extends gChart{
 	 *
 	 * This function allows you to specify colors for each individual slice of the chart or to specify a 
 	 * color gradient. Usage:
-	 * - One color one bar: addColors(array($colorBar1, .., $colorBarN)). If there are less color than
-	 *   bars, the colors are repeated
+	 * - One color one bar: addColors(array($colorBar1, .., $colorBarN)). If there are less colors than
+	 *   bars, colors will be repeated
 	 *
 	 * @param $colors Array Specifies colors using a 6-character string of hexadecimal values,
-	 * 						plus two optional transparency values, in the format RRGGBB[AA]
+	 *                      plus two optional transparency values, in the format RRGGBB[AA]
 	 */
 	public function addColors($colors) {
 		$this -> setProperty('chco', $this->encodeData($colors, "|"), true, ",");
@@ -1047,8 +1007,8 @@ class gMapChart extends gChart {
 	 * @brief A list of countries or states to which you are applying values. 
 	 *
 	 * @param $stateCodes Array These are a set of two-character codes. Use either of the following types (you cannot mix types):
-	 *							ISO 3166-1-alpha-2 codes for countries, {@link http://www.iso.org/iso/english_country_names_and_code_elements}
-     *							USA state code
+	 *                          ISO 3166-1-alpha-2 codes for countries, {@link http://www.iso.org/iso/english_country_names_and_code_elements}
+     *                          USA state code
 	 */
 	public function setStateCodes($stateCodes){
 		$this -> setProperty('chld', $this->encodeData($stateCodes, ''));
@@ -1056,12 +1016,17 @@ class gMapChart extends gChart {
 	/**
 	 * @brief Specifies the colors of the chart
 	 *
-	 * @param $defaultColor String The color of regions that do not have data assigned. An RRGGBB format hexadecimal number. The default is BEBEBE (medium gray). 
-	 * @param $gradientColors Array The colors corresponding to the gradient values in the data format range. RRGGBB format hexadecimal numbers.
+	 * @param $defaultColor String The color of regions that do not have data assigned. An RRGGBB format 
+	 *                             hexadecimal number. Suggested value is BEBEBE (medium gray). 
+	 * @param $gradientColors Array Optional. The colors corresponding to the gradient values in the data 
+	 *                              format range. RRGGBB format hexadecimal numbers. The default values are
+	 *                              0000FF and FF0000.
 	 */
-	public function setColors($defaultColor = 'BEBEBE', $gradientColors = array('0000FF', 'FF0000')) {
+	public function setColors($defaultColor) {
+		$gradientColors = (func_num_args() > 1) ? func_get_arg(1) : array('0000FF', 'FF0000');
 		$this -> setProperty('chco', $this->encodeData(array_merge(array($defaultColor), $gradientColors), ','));
 	}
+
 	public function getApplicableLabels($labels) {
 		return array_splice($labels, 0, count($this->values[0]));
 	}
