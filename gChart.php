@@ -3,7 +3,7 @@
  * @mainpage
  * gChartPhp, a php wrapper for  the Google Chart Tools / Image Charts (aka Chart API) {@link http://code.google.com/apis/charttools/}
  * 
- * @version 0.5.2
+ * @version 0.5.3
  */
 
 /**
@@ -849,29 +849,29 @@ class gGroupedBarChart extends gBarChart{
 }
 class gStackedBarChart extends gBarChart{
 	function __construct($width = 200, $height = 200){
-		$this -> setChartType('s', 'h');
+		$this -> setChartType('s', 'v');
 		$this -> setDimensions($width, $height);			
 	}
 	public function setHorizontal($isHorizontal = true){
 		if($isHorizontal){
-			$this -> setChartType('s', 'v');
+			$this -> setChartType('s', 'h');
 		}
 		else{
-			$this -> setChartType('s', 'h');
+			$this -> setChartType('s', 'v');
 		}
 	}
 }
 class gOverlappedBarChart extends gBarChart{
 	function __construct($width = 200, $height = 200){
-		$this -> setChartType('o', 'h');
+		$this -> setChartType('o', 'v');
 		$this->setDimensions($width, $height);			
 	}
 	public function setHorizontal($isHorizontal = true){
 		if($isHorizontal){
-			$this -> setChartType('o', 'v');
+			$this -> setChartType('o', 'h');
 		}
 		else{
-			$this -> setChartType('o', 'h');
+			$this -> setChartType('o', 'v');
 		}
 	}
 }
