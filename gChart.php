@@ -608,16 +608,18 @@ class gChart{
 	 * @brief Returns the url code for the image.
 	 */
 	public function getUrl(){
-		$fullUrl = "http://";
-		if(isset($this->serverNum))
-			$fullUrl .= $this->getServerNumber().".";
-		$fullUrl .= $this->baseUrl;
-		$this -> setDataSetString();
-		foreach ($this -> chart as $key => $value) {
-			$fullUrl .= '&amp;'.$key.'='.$value;
-		}
-		return $fullUrl;
-	}
+        $fullUrl = "http://";
+        if(isset($this->serverNum))
+            $fullUrl .= $this->getServerNumber().".";
+        $fullUrl .= $this->baseUrl;
+        $this -> setDataSetString();
+        $parms = array();
+        foreach ($this -> chart as $key => $value) {
+            $parms[] = $key.'='.$value;
+        }
+        return $fullUrl.implode('&amp;', $parms);
+}
+
 	/**
 	 * @brief Returns the html img code.
 	 * 
@@ -628,6 +630,31 @@ class gChart{
 		$code .= $this->getUrl().'"';
 		$code .= 'alt="gChartPhp Chart" width='.$this->width.' height='.$this->height.'>';
 		print($code);
+	}
+	/**
+	 * @brief Serversite chart renderer
+	 *
+	 * See view.html and img.php for an example of how to use this function.
+	 * Please refer to the API documentation for further examples.
+	 * 
+	 * @param $post Bool If true, the renderer will use a POST request for the image. If false, the 
+	 *                   renderer will use the standard url request. By default, the renderer will use
+	 *                   the url request.
+	 */
+	public function renderImage($post = false){
+		header('content-type: image/png');
+		if ($post) {
+			$this->setDataSetString();
+			$url = 'http://chart.apis.google.com/chart?chid=' . md5(uniqid(rand(), true));
+			$context = stream_context_create(
+		    array('http' => array(
+		      'method' => 'POST',
+			  'content' => urldecode(http_build_query($this->chart)))));
+		  	fpassthru(fopen($url, 'r', false, $context));
+		} else {
+	       	$url = str_replace('&amp;','&',$this->getUrl());
+	       	readfile($url);
+		}
 	}
 }
 
@@ -1054,4 +1081,3 @@ class gScatterChart extends gChart{
 	}
 }
 ?>
-
