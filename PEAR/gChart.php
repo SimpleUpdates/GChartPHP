@@ -701,22 +701,20 @@ class gChart
      *                   renderer will use the standard url request. By default, the renderer will use
      *                   the url request.
      */
-    public function renderImage($post = false)
-    {
-        header('content-type: image/png');
-        if ($post)
-        {
-            $this->setDataSetString();
-            $url = 'http://chart.apis.google.com/chart?chid=' . md5(uniqid(rand(), true));
-            $context = stream_context_create(
-                array('http' => array(
-                    'method' => 'POST',
-                    'content' => urldecode(http_build_query($this->chart)))));
-            fpassthru(fopen($url, 'r', false, $context));
-        } else
-        {
-            $url = str_replace('&amp;','&',$this->getUrl());
-            readfile($url);
-        }
-    }
+	public function renderImage($post = false) {
+		header('Content-type: image/png');
+		if ($post) {
+			$this->setDataSetString();
+			$url = 'http://chart.apis.google.com/chart?chid=' . md5(uniqid(rand(), true));
+			$context = stream_context_create(
+				array('http' => array(
+					'method' => 'POST',
+					'header' => 'Content-type: application/x-www-form-urlencoded' . "\r\n",
+					'content' => urldecode(http_build_query($this->chart, '', '&')))));
+				fpassthru(fopen($url, 'r', false, $context));
+		} else {
+			$url = str_replace('&amp;', '&', $this->getUrl());
+			readfile($url);
+		}
+	}
 }
