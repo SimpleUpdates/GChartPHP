@@ -346,6 +346,14 @@ class gChart{
 		}
 	}
 	/**
+	 * @brief Gets a chart property
+	 * @param $key String Name of the chart parameter
+	 */
+	public function getProperty($key) {
+		if (isset($this->chart[$key]))
+			return ($this->chart[$key]);
+	}
+	/**
 	 * @brief Sets chart dimensions.
 	 *
 	 * Sets chart dimension using chs parameter. This checks of $width and $height are 

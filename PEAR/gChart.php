@@ -376,6 +376,14 @@ class gChart
             $this->chart[$key] = $value;
         }
     }
+	/**
+	 * @brief Gets a chart property
+	 * @param $key String Name of the chart parameter
+	 */
+	public function getProperty($key) {
+		if (isset($this->chart[$key]))
+			return ($this->chart[$key]);
+	}
     /**
      * @brief Sets chart dimensions.
      *
